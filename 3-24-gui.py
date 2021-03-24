@@ -637,9 +637,10 @@ class Ui_RunWindow(object):
         whitelisted_ip = self.textEdit_14.toPlainText()
         blacklisted_ip = self.textEdit_15.toPlainText()
         scan_type = self.comboBox.currentText()
+        configuration_file = self.textEdit_16.toPlainText()
 
 
-        batch.add(SimpleStatement("INSERT INTO Configuration_Run (run_name, run_description, whitelisted_ip, blacklisted_ip, scan_type) VALUES (%s, %s, %s, %s, %s)"), (run_name, run_description, whitelisted_ip, blacklisted_ip, scan_type))
+        batch.add(SimpleStatement("INSERT INTO Configuration_Run (run_name, run_description, whitelisted_ip, blacklisted_ip, scan_type, configuration_file) VALUES (%s, %s, %s, %s, %s, %s)"), (run_name, run_description, whitelisted_ip, blacklisted_ip, scan_type, configuration_file))
 
         keyspace = "USE tutorialspoint;"
         session.execute(keyspace)
@@ -655,6 +656,7 @@ class Ui_RunWindow(object):
         self.textEdit_13.clear()
         self.textEdit_14.clear()
         self.textEdit_15.clear()
+        self.textEdit_16.clear()
 
 
 
@@ -701,9 +703,10 @@ class Ui_RunWindow(object):
         tool_path = self.textEdit_8.toPlainText()
         option_argument = self.textEdit_9.toPlainText()
         tool_data_specification = self.textEdit_11.toPlainText()
+        tool_specification_file = self.textEdit_10.toPlainText()
         
 
-        batch.add(SimpleStatement("INSERT INTO Tool_Specification (tool_name, tool_description, tool_path, option_argument, tool_data_specification) VALUES (%s, %s, %s, %s, %s)"), (tool_name, tool_description, tool_path, option_argument, tool_data_specification))
+        batch.add(SimpleStatement("INSERT INTO Tool_Specification (tool_name, tool_description, tool_path, option_argument, tool_data_specification, tool_specification_file) VALUES (%s, %s, %s, %s, %s, %s)"), (tool_name, tool_description, tool_path, option_argument, tool_data_specification, tool_specification_file))
 
         keyspace = "USE tutorialspoint;"
         session.execute(keyspace)
