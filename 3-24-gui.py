@@ -594,15 +594,17 @@ class Ui_RunWindow(object):
         self.pushButton_18.setText(_translate("RunWindow", "Add"))
         self.pushButton_19.setText(_translate("RunWindow", "Browse"))
         self.pushButton_19.clicked.connect(lambda: self.getFilePath(19))
-        self.comboBox_5.setItemText(0, _translate("RunWindow", "Test"))
-        self.comboBox_5.setItemText(1, _translate("RunWindow", "Test1"))
+        #self.comboBox_5.setItemText(0, _translate("RunWindow", "Test"))
+        #self.comboBox_5.setItemText(1, _translate("RunWindow", "Test1"))
         self.label_16.setText(_translate("RunWindow", "Dependent Data"))
         self.label_17.setText(_translate("RunWindow", "Operator"))
         self.label_18.setText(_translate("RunWindow", "Value"))
+        self.pushButton_14.clicked.connect(lambda: self.removeTooldependency())
         self.pushButton_14.setText(_translate("RunWindow", "Remove"))
         self.label_19.setText(_translate("RunWindow", "Dependency Expression"))
-        self.comboBox_6.setItemText(0, _translate("RunWindow", "Test"))
-        self.comboBox_6.setItemText(1, _translate("RunWindow", "Test1"))
+        #self.comboBox_6.setItemText(0, _translate("RunWindow", "Test"))
+        #self.comboBox_6.setItemText(1, _translate("RunWindow", "Test1"))
+        self.pushButton_15.clicked.connect(lambda:self.addTooldependency())
         self.pushButton_15.setText(_translate("RunWindow", "Add"))
         self.label_20.setText(_translate("RunWindow", "Tool Dependency"))
         self.tableWidget.setSortingEnabled(True)
@@ -688,7 +690,80 @@ class Ui_RunWindow(object):
             
         print("New row position: ", count)
         return count
-         
+
+        # Tool Dependency
+
+    def refreshToolDependecy(self):
+
+        cluster = Cluster(['127.0.0.1'], port=9042)
+        # Database Credentials
+        session = cluster.connect()
+        data = session.execute("SELECT dependent_data, relational_operator, dependent_value FROM tutorialspoint.tool_dependency;")
+
+        print(str(data))
+
+        #dependent_data, opperator, value = data[]
+        cnt = 0
+        for row in data:
+            #for i in row:
+            #print(row, i)
+            self.comboBox_5.addItem(row[0])
+            self.comboBox_6.addItem(row[1])
+            #self.textEdit_5.setPlainText(i)
+
+
+
+    def addTooldependency(self):
+
+        cluster = Cluster(['127.0.0.1'], port=9042)
+        # Database Credentials
+        session = cluster.connect()
+
+        batch = BatchStatement()
+        tool_name = self.textEdit_4.toPlainText()
+        dependency_expression = self.textEdit_6.toPlainText()
+        #print(dependency_expression)
+        data, operator, value = dependency_expression.split(' ', 3)
+        #print(f' Data : {data} OPP: {operator} Value: {value}')
+
+        batch.add(SimpleStatement(
+            "INSERT INTO Tool_dependency (tool_name, dependent_data, relational_operator, dependent_value) VALUES (%s, %s, %s, %s)"),
+            (tool_name, data, operator, value))
+
+        keyspace = "USE tutorialspoint;"
+        session.execute(keyspace)
+
+        # Insert into table
+        session.execute(batch)
+
+        # Close connection
+        session.shutdown()
+
+
+        # clear text boxes
+        self.textEdit_6.clear()
+        self.refreshToolDependecy()
+
+    def removeTooldependency(self):
+
+        cluster = Cluster(['127.0.0.1'], port=9042)
+        # Database Credentials
+        session = cluster.connect()
+        data = self.comboBox_5.currentText()
+        print(data)
+        keyspace = "USE tutorialspoint;"
+        session.execute(keyspace)
+
+        batch = BatchStatement()
+        batch.add(SimpleStatement("DELETE FROM Tool_dependency WHERE dependent_data=%s"), (str(data)))
+
+        # Remove from table
+        session.execute(batch)
+
+        # Close connection
+        session.shutdown()
+        self.refreshToolDependecy()
+
 
 #Create Save function for Tool Specification       
     def saveToolSpecification(self):
@@ -713,6 +788,8 @@ class Ui_RunWindow(object):
     
         #Insert into table
         session.execute(batch)
+
+        #self.addTooldependency()
           
         #Close connection
         session.shutdown() 
