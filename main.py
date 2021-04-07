@@ -322,33 +322,39 @@ def updateToolListRemovedTool(Ui_RunWindow):
     
 
 def refreshToolDependecy(Ui_RunWindow):
-
-    #data = dbmanager.selectQuery("SELECT dependent_data, relational_operator, dependent_value FROM tutorialspoint.tool_dependency;")
     
     _translate = QtCore.QCoreApplication.translate
     count  = 0
     
-    statement = SimpleStatement("SELECT * FROM tutorialspoint.tool_specification", fetch_size=10)
+    statement = SimpleStatement("SELECT * FROM tutorialspoint.tool_dependency", fetch_size=10)
     for user_row in dbmanager.selectQuery(statement):
         count += 1
     
-    data = dbmanager.selectQuery("SELECT tool_name FROM tutorialspoint.tool_specification;")  
+    data = dbmanager.selectQuery("SELECT tool_name FROM tutorialspoint.tool_dependency;")  
     
     for i in range(count):
         
         tool = data[i]
              
-        Ui_RunWindow.comboBox_7.setItemText(i, _translate("RunWindow", tool.tool_name))
+        Ui_RunWindow.comboBox_7.setItemText(i+1, _translate("RunWindow", tool.tool_name))
         
-
-    # print(str(data))
-
-   #for row in data:
-        # for i in row:
-        # print(row, i)
-        # Ui_RunWindow.comboBox_5.addItem(row[0])
-        # Ui_RunWindow.comboBox_6.addItem(row[1])
-
+    data = dbmanager.selectQuery("SELECT dependent_data FROM tutorialspoint.tool_dependency;")  
+    
+    for i in range(count):
+        
+        tool = data[i]
+             
+        Ui_RunWindow.comboBox_5.setItemText(i+1, _translate("RunWindow", tool.dependent_data))
+        
+    
+    data = dbmanager.selectQuery("SELECT relational_operator FROM tutorialspoint.tool_dependency;")  
+    
+    for i in range(count):
+        
+        tool = data[i]
+             
+        Ui_RunWindow.comboBox_6.setItemText(i+1, _translate("RunWindow", tool.relational_operator))
+        
 
 def addTooldependency(Ui_RunWindow):
 
@@ -357,22 +363,32 @@ def addTooldependency(Ui_RunWindow):
     operator = Ui_RunWindow.comboBox_6.currentText()
     value = Ui_RunWindow.textEdit_17.toPlainText()
     
-    dependency_expression = Ui_RunWindow.textEdit_6
-
-    dbmanager.insertQuery(
+    if tool_name == "":
+        
+        print("tool name is empty")
+        dependency_expression = Ui_RunWindow.textEdit_6.toPlainText()
+        tool_name, data, operator, value = dependency_expression.split(' ', 4)
+        
+        dbmanager.insertQuery(
         "INSERT INTO Tool_dependency (tool_name, dependent_data, relational_operator, dependent_value) VALUES (%s, %s, %s, %s);",
         (tool_name, data, operator, value))
+        
+    else:
+        print("tool name is not empty")
+        dbmanager.insertQuery(
+            "INSERT INTO Tool_dependency (tool_name, dependent_data, relational_operator, dependent_value) VALUES (%s, %s, %s, %s);",
+            (tool_name, data, operator, value))
 
-    #Clear text boxes
+    
+    # clear text boxes
+    Ui_RunWindow.textEdit_6.clear()
     Ui_RunWindow.textEdit_17.clear()
-    dependency_expression.setText(tool_name + " -> " + data + operator + value)
     refreshToolDependecy(Ui_RunWindow)
 
 
 def removeTooldependency(Ui_RunWindow):
-    data = Ui_RunWindow.comboBox_5.currentText()
-    print(data)
-    dbmanager.deleteQuery("DELETE FROM Tool_dependency WHERE dependent_data=%s", (str(data)))
-    Ui_RunWindow.refreshToolDependecy()
+    data = Ui_RunWindow.comboBox_7.currentText()
+    dbmanager.deleteQuery("DELETE FROM tool_dependency WHERE tool_name=%s", ([data]))
+    refreshToolDependecy(Ui_RunWindow)
 
 
