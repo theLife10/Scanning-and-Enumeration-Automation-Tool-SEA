@@ -1,5 +1,5 @@
 from cassandra.cluster import Cluster
-from cassandra.query import SimpleStatement, BatchStatement
+from cassandra.query import BatchStatement
 
 
 def connect():
@@ -30,7 +30,7 @@ def insertQuery(statement, variables):
     keyspace = "USE tutorialspoint;"
     session.execute(keyspace)
     # Execute
-    result = session.execute(batch)
+    session.execute(batch)
     # Close connection
     closeConnection(session)
 
@@ -42,7 +42,7 @@ def deleteQuery(statement, variable):
     keyspace = "USE tutorialspoint;"
     session.execute(keyspace)
     # Execute
-    result = session.execute(batch)
+    session.execute(batch)
     # Close connection
     closeConnection(session)
 
