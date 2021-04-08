@@ -399,26 +399,33 @@ def runListAction(Ui_RunWindow, row, instruction):
 
     for i in scans:
         if( row == i.row):
-            scans.manage_state(instruction)
+            i.manage_state(instruction)
             exists = 1
     if(exists == 0):
         #thisScan.name = name
-
+        nameOfRun = Ui_RunWindow.RunListTable.item(row, 0).text()
         cluster = Cluster(['127.0.0.1'], port=9042)
         # Database Credentials
         session = cluster.connect()
         statement = None
+        import traceback
         try:
             statement = SimpleStatement("SELECT tool_path FROM tutorialspoint.tool_specification WHERE tool_name = '{}';".format(nameOfRun), fetch_size=10)
             filepath = session.execute(statement)[0][0]
             statement = SimpleStatement("SELECT option_argument FROM tutorialspoint.tool_specification WHERE tool_name = '{}';".format(nameOfRun), fetch_size=10)
             params = session.execute(statement)[0][0]
+        
+        
+            print(filepath,params)
 
+            
             thisScan.file = filepath
+            thisScan.params = params
             thisScan.row = row
             thisScan.manage_state(0)
         except:
             print("File Not found")
+            traceback.print_exc()
         scans.append(thisScan)
 
 
