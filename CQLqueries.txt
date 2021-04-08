@@ -1,4 +1,4 @@
-CREATE TABLE Tool_Specification(tool_name text PRIMARY KEY, tool_description text, tool_path text, option_argument text, tool_specification text);
+CREATE TABLE Tool_Specification(tool_name text PRIMARY KEY, tool_description text, tool_path text, option_argument text, tool_data_specification text, tool_specification_file text);
 
 CREATE TABLE Tool_Dependency(tool_name text PRIMARY KEY, dependent_data text, relational_operator text, dependent_value text);
 
