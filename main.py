@@ -3,8 +3,10 @@ from cassandra.cluster import Cluster
 from cassandra.query import SimpleStatement, BatchStatement
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QMessageBox
 import dbmanager
-import file_browser
-   
+import file_browser 
+import gui, scan
+
+scans = []
 
 #Clicking Save in the Configuration Run Window
 def saveConfigurationRun(Ui_RunWindow):
@@ -385,10 +387,47 @@ def addTooldependency(Ui_RunWindow):
     Ui_RunWindow.textEdit_17.clear()
     refreshToolDependecy(Ui_RunWindow)
 
-
 def removeTooldependency(Ui_RunWindow):
     data = Ui_RunWindow.comboBox_7.currentText()
     dbmanager.deleteQuery("DELETE FROM tool_dependency WHERE tool_name=%s", ([data]))
     refreshToolDependecy(Ui_RunWindow)
 
+def runListAction(Ui_RunWindow, row, instruction):
+    #name = Ui_RunWindow.RunListTable.item(row,0).text()
+    exists = 0
+    thisScan = scan.scan()
 
+    for i in scans:
+        if( row == i.row):
+            scans.manage_state(instruction)
+            exists = 1
+    if(exists == 0):
+        #thisScan.name = name
+
+        cluster = Cluster(['127.0.0.1'], port=9042)
+        # Database Credentials
+        session = cluster.connect()
+        statement = None
+        try:
+            statement = SimpleStatement("SELECT tool_path FROM tutorialspoint.tool_specification WHERE tool_name = '{}';".format(nameOfRun), fetch_size=10)
+            filepath = session.execute(statement)[0][0]
+            statement = SimpleStatement("SELECT option_argument FROM tutorialspoint.tool_specification WHERE tool_name = '{}';".format(nameOfRun), fetch_size=10)
+            params = session.execute(statement)[0][0]
+
+            thisScan.file = filepath
+            thisScan.row = row
+            thisScan.manage_state(0)
+        except:
+            print("File Not found")
+        scans.append(thisScan)
+
+
+
+if __name__ == "__main__":
+    import sys
+    app = QtWidgets.QApplication(sys.argv)
+    RunWindow = QtWidgets.QWidget()
+    ui = gui.Ui_RunWindow()
+    ui.setupUi(RunWindow)
+    RunWindow.show()
+    sys.exit(app.exec_())
