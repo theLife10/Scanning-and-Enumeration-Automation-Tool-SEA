@@ -136,6 +136,8 @@ class Ui_RunWindow(object):
         icon.addPixmap(QtGui.QPixmap("../../../../Downloads/play.PNG"), QtGui.QIcon.Normal, QtGui.QIcon.On)
         self.toolButton.setIcon(icon)
         self.toolButton.setObjectName("toolButton")
+        self.toolButton.clicked.connect(lambda: main.runListAction(self,0, 0))
+
         self.toolButton_4 = QtWidgets.QToolButton(self.groupBox_3)
         self.toolButton_4.setGeometry(QtCore.QRect(300, 80, 25, 19))
         icon1 = QtGui.QIcon()
@@ -143,6 +145,8 @@ class Ui_RunWindow(object):
         icon1.addPixmap(QtGui.QPixmap("../../../../Downloads/pause.PNG"), QtGui.QIcon.Normal, QtGui.QIcon.On)
         self.toolButton_4.setIcon(icon1)
         self.toolButton_4.setObjectName("toolButton_4")
+        self.toolButton_4.clicked.connect(lambda: main.runListAction(self,0, 0))
+
         self.toolButton_5 = QtWidgets.QToolButton(self.groupBox_3)
         self.toolButton_5.setGeometry(QtCore.QRect(340, 80, 25, 19))
         icon2 = QtGui.QIcon()
@@ -150,42 +154,62 @@ class Ui_RunWindow(object):
         icon2.addPixmap(QtGui.QPixmap("../../../../Downloads/stop.PNG"), QtGui.QIcon.Normal, QtGui.QIcon.On)
         self.toolButton_5.setIcon(icon2)
         self.toolButton_5.setObjectName("toolButton_5")
+        self.toolButton_5.clicked.connect(lambda: main.runListAction(self,0, 1))
+
         self.toolButton_6 = QtWidgets.QToolButton(self.groupBox_3)
         self.toolButton_6.setGeometry(QtCore.QRect(340, 110, 25, 19))
         self.toolButton_6.setIcon(icon2)
         self.toolButton_6.setObjectName("toolButton_6")
+        self.toolButton_6.clicked.connect(lambda: main.runListAction(self,1, 1))
+
         self.toolButton_2 = QtWidgets.QToolButton(self.groupBox_3)
         self.toolButton_2.setGeometry(QtCore.QRect(260, 110, 25, 19))
         self.toolButton_2.setIcon(icon)
         self.toolButton_2.setObjectName("toolButton_2")
+        self.toolButton_2.clicked.connect(lambda: main.runListAction(self,1, 0))
+
         self.toolButton_7 = QtWidgets.QToolButton(self.groupBox_3)
         self.toolButton_7.setGeometry(QtCore.QRect(300, 110, 25, 19))
         self.toolButton_7.setIcon(icon1)
         self.toolButton_7.setObjectName("toolButton_7")
+        self.toolButton_7.clicked.connect(lambda: main.runListAction(self,1, 0))
+
         self.toolButton_8 = QtWidgets.QToolButton(self.groupBox_3)
         self.toolButton_8.setGeometry(QtCore.QRect(340, 140, 25, 19))
         self.toolButton_8.setIcon(icon2)
         self.toolButton_8.setObjectName("toolButton_8")
+        self.toolButton_8.clicked.connect(lambda: main.runListAction(self,2, 1))
+
         self.toolButton_3 = QtWidgets.QToolButton(self.groupBox_3)
         self.toolButton_3.setGeometry(QtCore.QRect(260, 140, 25, 19))
         self.toolButton_3.setIcon(icon)
         self.toolButton_3.setObjectName("toolButton_3")
+        self.toolButton_3.clicked.connect(lambda: main.runListAction(self,2, 0))
+
         self.toolButton_9 = QtWidgets.QToolButton(self.groupBox_3)
         self.toolButton_9.setGeometry(QtCore.QRect(300, 140, 25, 19))
         self.toolButton_9.setIcon(icon1)
         self.toolButton_9.setObjectName("toolButton_9")
+        self.toolButton_9.clicked.connect(lambda: main.runListAction(self,2, 0))
+
         self.toolButton_10 = QtWidgets.QToolButton(self.groupBox_3)
         self.toolButton_10.setGeometry(QtCore.QRect(300, 170, 25, 19))
         self.toolButton_10.setIcon(icon1)
         self.toolButton_10.setObjectName("toolButton_10")
+        self.toolButton_10.clicked.connect(lambda: main.runListAction(self,3, 0))
+
         self.toolButton_11 = QtWidgets.QToolButton(self.groupBox_3)
         self.toolButton_11.setGeometry(QtCore.QRect(260, 170, 25, 19))
         self.toolButton_11.setIcon(icon)
         self.toolButton_11.setObjectName("toolButton_11")
+        self.toolButton_11.clicked.connect(lambda: main.runListAction(self,3, 0))
+
         self.toolButton_12 = QtWidgets.QToolButton(self.groupBox_3)
         self.toolButton_12.setGeometry(QtCore.QRect(340, 170, 25, 19))
         self.toolButton_12.setIcon(icon2)
         self.toolButton_12.setObjectName("toolButton_12")
+        self.toolButton_2.clicked.connect(lambda: main.runListAction(self,3, 1))
+
         self.groupBox_5 = QtWidgets.QGroupBox(self.groupBox)
         self.groupBox_5.setGeometry(QtCore.QRect(480, 10, 441, 311))
         self.groupBox_5.setTitle("")
@@ -673,11 +697,3 @@ class Ui_RunWindow(object):
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.scan_1), _translate("RunWindow", "Scan 1"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.scan_2), _translate("RunWindow", "Scan 2"))
 
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    RunWindow = QtWidgets.QWidget()
-    ui = Ui_RunWindow()
-    ui.setupUi(RunWindow)
-    RunWindow.show()
-    sys.exit(app.exec_())
