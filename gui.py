@@ -586,8 +586,6 @@ class Ui_RunWindow(object):
         self.label_5.setText(_translate("RunWindow", "Whitelisted IP Target"))
         self.label_6.setText(_translate("RunWindow", "Blacklisted IP Target"))
         self.label_7.setText(_translate("RunWindow", "Scan Type"))
-        self.comboBox.setItemText(0, _translate("RunWindow", "Test"))
-        self.comboBox.setItemText(1, _translate("RunWindow", "Test1"))
         self.pushButton.setText(_translate("RunWindow", "Add"))
         self.label_8.setText(_translate("RunWindow", "OR"))
         self.label_9.setText(_translate("RunWindow", "Run Configuration File"))

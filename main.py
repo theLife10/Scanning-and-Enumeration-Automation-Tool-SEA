@@ -101,6 +101,8 @@ def updateToolListAddedTool(Ui_RunWindow, new_tool, description):
     
     _translate = QtCore.QCoreApplication.translate
     
+    Ui_RunWindow.comboBox.setItemText(row, _translate("RunWindow", new_tool))
+    
     item.setText(_translate("RunWindow", new_tool))
     
     item = Ui_RunWindow.RunListTable_2.item(row, 1)
