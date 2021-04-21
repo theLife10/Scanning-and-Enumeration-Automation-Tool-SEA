@@ -56,7 +56,7 @@ class scan(QObject):
     def stop(self):    
         self.state = -1
         self.thread.terminate()
-        self.deleteLater()
+        #self.deleteLater()
         #print('scan: ' + self.name + '...Ended')
 
     def manage_state(self, stop):
