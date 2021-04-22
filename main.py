@@ -8,6 +8,7 @@ import gui, scan
 
 scans = []
 
+#TODO: when configuration_file textEdit filled should save that as separate row
 #Clicking Save in the Configuration Run Window
 def saveConfigurationRun(Ui_RunWindow):
     
@@ -15,19 +16,19 @@ def saveConfigurationRun(Ui_RunWindow):
     run_description = Ui_RunWindow.textEdit_13.toPlainText()
     whitelisted_ip = Ui_RunWindow.textEdit_14.toPlainText()
     blacklisted_ip = Ui_RunWindow.textEdit_15.toPlainText()
-    scan_type = Ui_RunWindow.comboBox.currentText()
-    configuration_file = Ui_RunWindow.textEdit_16.toPlainText()
+    #scan_type = Ui_RunWindow.comboBox.currentText()
+    #configuration_file = Ui_RunWindow.textEdit_16.toPlainText()
     
     print(run_name)
     print(run_description)
     print(whitelisted_ip)
     print(blacklisted_ip)
-    print(scan_type)
-    print(configuration_file)
+    #print(scan_type)
+    #print(configuration_file)
     
     dbmanager.insertQuery(
-        "INSERT INTO Configuration_Run (run_name, run_description, whitelisted_ip, blacklisted_ip, scan_type, configuration_file) VALUES (%s, %s, %s, %s, %s, %s)",
-        (run_name, run_description, whitelisted_ip, blacklisted_ip, scan_type, configuration_file))
+        "INSERT INTO Configuration_Run (run_name, run_description, whitelisted_ip, blacklisted_ip) VALUES (%s, %s, %s, %s)",
+        (run_name, run_description, whitelisted_ip, blacklisted_ip))
     
     updateRunListAddedTool(Ui_RunWindow, run_name, run_description)
     
@@ -100,6 +101,8 @@ def updateToolListAddedTool(Ui_RunWindow, new_tool, description):
     print("Tool added: ", new_tool)
     
     _translate = QtCore.QCoreApplication.translate
+    
+    Ui_RunWindow.comboBox.setItemText(row, _translate("RunWindow", new_tool))
     
     item.setText(_translate("RunWindow", new_tool))
     
@@ -399,29 +402,39 @@ def runListAction(Ui_RunWindow, row, instruction):
 
     for i in scans:
         if( row == i.row):
-            scans.manage_state(instruction)
+            i.manage_state(instruction)
             exists = 1
     if(exists == 0):
         #thisScan.name = name
-
+        nameOfRun = Ui_RunWindow.RunListTable.item(row, 0).text()
         cluster = Cluster(['127.0.0.1'], port=9042)
         # Database Credentials
         session = cluster.connect()
         statement = None
+        import traceback
         try:
             statement = SimpleStatement("SELECT tool_path FROM tutorialspoint.tool_specification WHERE tool_name = '{}';".format(nameOfRun), fetch_size=10)
             filepath = session.execute(statement)[0][0]
             statement = SimpleStatement("SELECT option_argument FROM tutorialspoint.tool_specification WHERE tool_name = '{}';".format(nameOfRun), fetch_size=10)
             params = session.execute(statement)[0][0]
+        
+        
+            print(filepath,params)
 
+            
             thisScan.file = filepath
+            thisScan.params = params
             thisScan.row = row
             thisScan.manage_state(0)
         except:
             print("File Not found")
+            traceback.print_exc()
         scans.append(thisScan)
 
+def addToolToScanType(row,selection):
+    dbmanager.updateList("configuration_run", "scan_type", "run_name", row, [selection])
 
+    
 
 if __name__ == "__main__":
     import sys
