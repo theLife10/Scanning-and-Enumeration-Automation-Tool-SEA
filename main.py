@@ -283,19 +283,29 @@ def getNewToolNameConfigurationRun(row):
     
         return tool.run_name
     
- 
 #Confirmation delete window
-def showDialog(Ui_RunWindow):
+def popWindow(title, text):
         msgBox = QMessageBox()
         msgBox.setIcon(QMessageBox.Information)
-        msgBox.setText("Are you sure you want to remove this tool?")
-        msgBox.setWindowTitle("QMessageBox Example")
+        msgBox.setText(text)
+        msgBox.setWindowTitle(title)
         msgBox.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
 
         returnValue = msgBox.exec()
         if returnValue == QMessageBox.Ok:
             print('OK clicked')  
- 
+
+def deleteDialogue():
+    title = "Delete Warning!"
+    warning = "Are you sure you want to remove this tool?"
+    popWindow(title, warning)
+
+def pauseDialogue(Ui_RunWindow, row):
+    title = "Mid-Scan Pause"
+    warning = "Scans can not be paused after they have been started."
+    warning = warning +"\n However the scans that come after will be paused from starting."
+    popWindow(title, warning)
+    runListAction(Ui_RunWindow, row,0)
     
 #Update the tool list when a tool is removed    
 def updateToolListRemovedTool(Ui_RunWindow): 
