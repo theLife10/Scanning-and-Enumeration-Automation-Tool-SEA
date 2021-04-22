@@ -510,8 +510,13 @@ class Ui_RunWindow(object):
         self.scan_2 = QtWidgets.QWidget()
         self.scan_2.setObjectName("scan_2")
         self.tabWidget.addTab(self.scan_2, "")
-
-         ## Jesus
+        self.textEdit_2 = QtWidgets.QTextEdit(self.scan_1)
+        self.textEdit_2.setGeometry(QtCore.QRect(3, 0, 481, 79))
+        self.textEdit_2.setObjectName("textEdit_2")
+        self.textEdit_5 = QtWidgets.QTextEdit(self.scan_2)
+        self.textEdit_5.setGeometry(QtCore.QRect(0, 0, 491, 79))
+        self.textEdit_5.setObjectName("textEdit_5")
+        
         self.scan_area_play = QtWidgets.QToolButton(self.tableWidget)
         self.scan_area_play.setGeometry(QtCore.QRect(580, 30, 25, 19))
         icon_scan = QtGui.QIcon()
@@ -519,7 +524,6 @@ class Ui_RunWindow(object):
         icon_scan.addPixmap(QtGui.QPixmap("play.png"), QtGui.QIcon.Normal, QtGui.QIcon.On)
         self.scan_area_play.setIcon(icon_scan)
         self.scan_area_play.setObjectName("scanButton_play")
-        #self.toolButton.clicked.connect(lambda: main.runListAction(self,0, 0))
 
         self.scan_area_play = QtWidgets.QToolButton(self.tableWidget)
         self.scan_area_play.setGeometry(QtCore.QRect(580, 58, 25, 19))
@@ -584,9 +588,11 @@ class Ui_RunWindow(object):
         icon_scan_stop.addPixmap(QtGui.QPixmap("stop.png"), QtGui.QIcon.Normal, QtGui.QIcon.On)
         self.scan_area_stop.setIcon(icon_scan_stop)
         self.scan_area_stop.setObjectName("scanButton_stop")
-
-
-        #Jesus
+        
+        
+        
+        
+        
 
         self.retranslateUi(RunWindow)
         self.tabWidget.setCurrentIndex(0)
@@ -769,6 +775,4 @@ class Ui_RunWindow(object):
         __sortingEnabled = self.tableWidget.isSortingEnabled()
         self.tableWidget.setSortingEnabled(False)
         self.tableWidget.setSortingEnabled(__sortingEnabled)
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.scan_1), _translate("RunWindow", "Scan 1"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.scan_2), _translate("RunWindow", "Scan 2"))
 
