@@ -4,8 +4,11 @@ from cassandra.query import SimpleStatement, BatchStatement
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QMessageBox, QTableWidgetItem
 import dbmanager
 import file_browser 
+
 import gui, scan, calendar, time, os
 from subprocess import Popen, PIPE
+
+import gui, scan
 
 scans = []
 
@@ -448,7 +451,11 @@ def addTooldependency(Ui_RunWindow):
     # clear text boxes
     Ui_RunWindow.textEdit_6.clear()
     Ui_RunWindow.textEdit_17.clear()
+
     refreshToolDependecy(Ui_RunWindow)    
+
+    refreshToolDependecy(Ui_RunWindow)
+
 
 def removeTooldependency(Ui_RunWindow):
     data = Ui_RunWindow.comboBox_7.currentText()
@@ -473,6 +480,7 @@ def runListAction(Ui_RunWindow, row, instruction):
         statement = None
         import traceback
         try:
+
             statement = SimpleStatement("SELECT tool_path FROM tutorialspoint.tool_specification WHERE tool_name = '{}';".format(nameOfRun), fetch_size=10)
             filepath = session.execute(statement)[0][0]
             print(filepath)
@@ -503,6 +511,21 @@ def runListAction(Ui_RunWindow, row, instruction):
             traceback.print_exc()
         scans.append(thisScan)
         
+
+            statement = SimpleStatement("SELECT scan_type FROM tutorialspoint.configuration_run WHERE run_name = '{}';".format(nameOfRun), fetch_size=10)
+            filepath = session.execute(statement)[0][0]
+            #statement = SimpleStatement("SELECT option_argument FROM tutorialspoint.tool_specification WHERE tool_name = '{}';".format(nameOfRun), fetch_size=10)
+            #params = session.execute(statement)[0][0]
+    
+            thisScan.file = filepath
+            #thisScan.params = params
+            thisScan.row = row
+            thisScan.manage_state(0)
+        except:
+            print("File Not found")
+            traceback.print_exc()
+        scans.append(thisScan)
+
 
 
 
