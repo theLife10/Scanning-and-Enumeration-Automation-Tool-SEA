@@ -3,8 +3,10 @@ from cassandra.cluster import Cluster
 from cassandra.query import SimpleStatement, BatchStatement
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QMessageBox
 import dbmanager
-import file_browser
-   
+import file_browser 
+import gui, scan
+
+scans = []
 
 #Clicking Save in the Configuration Run Window
 def saveConfigurationRun(Ui_RunWindow):
@@ -98,6 +100,8 @@ def updateToolListAddedTool(Ui_RunWindow, new_tool, description):
     print("Tool added: ", new_tool)
     
     _translate = QtCore.QCoreApplication.translate
+    
+    Ui_RunWindow.comboBox.setItemText(row, _translate("RunWindow", new_tool))
     
     item.setText(_translate("RunWindow", new_tool))
     
@@ -385,10 +389,50 @@ def addTooldependency(Ui_RunWindow):
     Ui_RunWindow.textEdit_17.clear()
     refreshToolDependecy(Ui_RunWindow)
 
-
 def removeTooldependency(Ui_RunWindow):
     data = Ui_RunWindow.comboBox_7.currentText()
     dbmanager.deleteQuery("DELETE FROM tool_dependency WHERE tool_name=%s", ([data]))
     refreshToolDependecy(Ui_RunWindow)
 
+def runListAction(Ui_RunWindow, row, instruction):
+    #name = Ui_RunWindow.RunListTable.item(row,0).text()
+    exists = 0
+    thisScan = scan.scan()
 
+    for i in scans:
+        if( row == i.row):
+            i.manage_state(instruction)
+            exists = 1
+    if(exists == 0):
+        #thisScan.name = name
+        nameOfRun = Ui_RunWindow.RunListTable.item(row, 0).text()
+        cluster = Cluster(['127.0.0.1'], port=9042)
+        # Database Credentials
+        session = cluster.connect()
+        statement = None
+        import traceback
+        try:
+            statement = SimpleStatement("SELECT scan_type FROM tutorialspoint.configuration_run WHERE run_name = '{}';".format(nameOfRun), fetch_size=10)
+            filepath = session.execute(statement)[0][0]
+            #statement = SimpleStatement("SELECT option_argument FROM tutorialspoint.tool_specification WHERE tool_name = '{}';".format(nameOfRun), fetch_size=10)
+            #params = session.execute(statement)[0][0]
+    
+            thisScan.file = filepath
+            #thisScan.params = params
+            thisScan.row = row
+            thisScan.manage_state(0)
+        except:
+            print("File Not found")
+            traceback.print_exc()
+        scans.append(thisScan)
+
+
+
+if __name__ == "__main__":
+    import sys
+    app = QtWidgets.QApplication(sys.argv)
+    RunWindow = QtWidgets.QWidget()
+    ui = gui.Ui_RunWindow()
+    ui.setupUi(RunWindow)
+    RunWindow.show()
+    sys.exit(app.exec_())
