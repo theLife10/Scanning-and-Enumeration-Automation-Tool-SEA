@@ -7,11 +7,10 @@ global playButton, pauseButton, stopButton
 class worker(QThread):
     finished = pyqtSignal()
     progress = pyqtSignal(int)
-
+    filepath = ''
+    params = ''
     def run(self):
-        for i in range(5):
-            sleep(1)
-            run_file()
+       os.system(self.filepath+' '+self.params)
     
 
 class scan(QObject):
@@ -21,41 +20,49 @@ class scan(QObject):
         #states 0 = paused 1 = running -1 = finished
         self.state = -2
         self.file = ''
+        self.params = ''
         self.thread = worker()
     
     
     #jacob's startRunList()
-    def start(self, name):
+    def start(self):
         self.state = 1
+        import traceback
         try:
-            self.moveToThread(self.thread)
-            self.thread.started.connect(self.run_file())
-            self.finished.connect(self.stop())
+            #self.thread = QtCore.QThread()
+            #self.worker = worker()
+
+            #self.moveToThread(self.thread)
+            #self.thread.started.connect(self.run_file)
+            #self.finished.connect(self.stop())
+            self.thread.filepath = self.file
+            self.thread.params = self.params
             self.thread.start()
-            print('scan: ' + self.name + '...Starting')
+            print('scan: ...Starting')
 
         except:
+            traceback.print_exc()
             print('DNE')
 
     def pause(self):
         self.state = 0
-        while(state == 0 ):
+        while(self.state == 0 ):
             self.thread.wait(1)
-
+    
     def resume(self):
         self.state = 1
         self.thread.wait(1)
 
     def stop(self):    
         self.state = -1
-        self.thread.quit()
-        self.deleteLater()
-        print('scan: ' + self.name + '...Ended')
+        self.thread.terminate()
+        #self.deleteLater()
+        #print('scan: ' + self.name + '...Ended')
 
     def manage_state(self, stop):
         if(stop == 0):
             if(self.state < 0):
-                self.start(name)
+                self.start()
             elif(self.state == 0):
                 self.resume()
             elif(self.state == 1):
@@ -71,4 +78,4 @@ class scan(QObject):
 
     #jacob's worker.run and run_file
     def run_file(self):
-       os.system(file)
+        os.system(self.file+' '+self.params)
