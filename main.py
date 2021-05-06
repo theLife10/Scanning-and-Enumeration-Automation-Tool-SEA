@@ -31,8 +31,8 @@ def saveConfigurationRun(Ui_RunWindow):
 
     
     dbmanager.insertQuery(
-        "INSERT INTO Configuration_Run (run_name, run_description, whitelisted_ip, blacklisted_ip, scan_type, configuration_file) VALUES (%s, %s, %s, %s, %s, %s)",
-        (run_name, run_description, whitelisted_ip, blacklisted_ip, scan_type, configuration_file))
+        "INSERT INTO Configuration_Run (run_name, run_description, whitelisted_ip, blacklisted_ip, scan_type, configuration_file) VALUES (%s, %s, %s, %s)",
+        (run_name, run_description, whitelisted_ip, blacklisted_ip))
     
     updateRunListAddedTool(Ui_RunWindow, run_name, run_description, scan_type)
     
