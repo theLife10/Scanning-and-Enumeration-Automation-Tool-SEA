@@ -9,7 +9,6 @@ from subprocess import Popen, PIPE
 
 scans = []
 
-#TODO: when configuration_file textEdit filled should save that as separate row
 #Clicking Save in the Configuration Run Window
 def saveConfigurationRun(Ui_RunWindow):
     
@@ -17,15 +16,15 @@ def saveConfigurationRun(Ui_RunWindow):
     run_description = Ui_RunWindow.textEdit_13.toPlainText()
     whitelisted_ip = Ui_RunWindow.textEdit_14.toPlainText()
     blacklisted_ip = Ui_RunWindow.textEdit_15.toPlainText()
-    #scan_type = Ui_RunWindow.comboBox.currentText()
-    #configuration_file = Ui_RunWindow.textEdit_16.toPlainText()
+    # scan_type = Ui_RunWindow.comboBox.currentText()
+    # configuration_file = Ui_RunWindow.textEdit_16.toPlainText()
     
     print(run_name)
     print(run_description)
     print(whitelisted_ip)
     print(blacklisted_ip)
-    #print(scan_type)
-    #print(configuration_file)
+    # print(scan_type)
+    # print(configuration_file)
     
     dbmanager.insertQuery(
         "INSERT INTO Configuration_Run (run_name, run_description, whitelisted_ip, blacklisted_ip) VALUES (%s, %s, %s, %s)",
@@ -342,8 +341,8 @@ def getNewToolNameConfigurationRun(row):
         tool = data[row]
     
         return tool.run_name
-    
-#Confirmation delete window
+     
+#Pop up window base
 def popWindow(title, text):
         msgBox = QMessageBox()
         msgBox.setIcon(QMessageBox.Information)
@@ -355,15 +354,16 @@ def popWindow(title, text):
         if returnValue == QMessageBox.Ok:
             print('OK clicked')  
 
+#confirmation delete window
 def deleteDialogue():
     title = "Delete Warning!"
     warning = "Are you sure you want to remove this tool?"
     popWindow(title, warning)
 
+#midscan pause window
 def pauseDialogue(Ui_RunWindow, row):
     title = "Mid-Scan Pause"
-    warning = "Scans can not be paused after they have been started."
-    warning = warning +"\n However the scans that come after will be paused from starting."
+    warning = "This scan can not be paused after it has been started."
     popWindow(title, warning)
     runListAction(Ui_RunWindow, row,0)
     
@@ -491,9 +491,7 @@ def runListAction(Ui_RunWindow, row, instruction):
             print(filepath)
             statement = SimpleStatement("SELECT option_argument FROM tutorialspoint.tool_specification WHERE tool_name = '{}';".format(nameOfRun), fetch_size=10)
             params = session.execute(statement)[0][0]
-
             scanTableStartTime(Ui_RunWindow, row)
-
         
             print(filepath,params)
 
@@ -519,28 +517,8 @@ def runListAction(Ui_RunWindow, row, instruction):
         scans.append(thisScan)
         
 
-
-            statement = SimpleStatement("SELECT scan_type FROM tutorialspoint.configuration_run WHERE run_name = '{}';".format(nameOfRun), fetch_size=10)
-            filepath = session.execute(statement)[0][0]
-            #statement = SimpleStatement("SELECT option_argument FROM tutorialspoint.tool_specification WHERE tool_name = '{}';".format(nameOfRun), fetch_size=10)
-            #params = session.execute(statement)[0][0]
-    
-            thisScan.file = filepath
-            #thisScan.params = params
-
-            thisScan.row = row
-            thisScan.manage_state(0)
-        except:
-            print("File Not found")
-            traceback.print_exc()
-        scans.append(thisScan)
-
 def addToolToScanType(row,selection):
-    dbmanager.updateList("configuration_run", "scan_type", "run_name", row, [selection])
-
-    
-
-
+    dbmanager.updateList("configuration_run", "scan_type", "run_name", row, [selection])  
 
 if __name__ == "__main__":
     import sys
