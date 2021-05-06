@@ -31,10 +31,10 @@ def saveConfigurationRun(Ui_RunWindow):
 
     
     dbmanager.insertQuery(
-        "INSERT INTO Configuration_Run (run_name, run_description, whitelisted_ip, blacklisted_ip, scan_type, configuration_file) VALUES (%s, %s, %s, %s)",
+        "INSERT INTO Configuration_Run (run_name, run_description, whitelisted_ip, blacklisted_ip) VALUES (%s, %s, %s, %s)",
         (run_name, run_description, whitelisted_ip, blacklisted_ip))
     
-    updateRunListAddedTool(Ui_RunWindow, run_name, run_description, scan_type)
+    updateRunListAddedTool(Ui_RunWindow, run_name, run_description)
     
     # clear text boxes
     Ui_RunWindow.textEdit_12.clear()
@@ -68,7 +68,7 @@ def nextAvailableRowConfigRun(Ui_RunWindow):
 
 
 #Update the run list table when there's a new value
-def updateRunListAddedTool(Ui_RunWindow, new_tool, description, tool):
+def updateRunListAddedTool(Ui_RunWindow, run_name, description):
     
     row = nextAvailableRowConfigRun(Ui_RunWindow)
     
@@ -78,13 +78,13 @@ def updateRunListAddedTool(Ui_RunWindow, new_tool, description, tool):
     
     item = Ui_RunWindow.RunListTable.item(row, 0)
     
-    Ui_RunWindow.comboBox_2.addItem(new_tool)
+    Ui_RunWindow.comboBox_2.addItem(run_name)
 
-    print("Tool added: ", new_tool)
+    print("Run added: ", run_name)
     
     _translate = QtCore.QCoreApplication.translate
     
-    item.setText(_translate("RunWindow", new_tool))
+    item.setText(_translate("RunWindow", run_name))
     
     item = Ui_RunWindow.RunListTable.item(row, 1)
     
@@ -94,7 +94,10 @@ def updateRunListAddedTool(Ui_RunWindow, new_tool, description, tool):
     
     item.setText(_translate("RunWindow", description))
     
-    updateScanTable(Ui_RunWindow, tool)
+    statement = f"SELECT scan_type FROM configuration_run WHERE run_name = '{run_name}'"
+    tool_list = dbmanager.selectQuery(statement)[0][0]
+    for tool in tool_list:
+        updateScanTable(Ui_RunWindow, tool)
 
 
 #Update the tool list table when there's a new value
@@ -126,16 +129,17 @@ def updateToolListAddedTool(Ui_RunWindow, new_tool, description):
 
 #Update the scan list table when there's a new run 
 def updateScanTable(Ui_RunWindow, new_tool):
+    rows = Ui_RunWindow.tableWidget.rowCount()
+    occupied = 0
     
-    initial_row = nextAvailableRowConfigRun(Ui_RunWindow)
-    print(initial_row)
-    
-    row = initial_row - 1
-    print(row)
-    
-    Ui_RunWindow.tableWidget.setItem(row,0, QTableWidgetItem(new_tool))
-    Ui_RunWindow.tableWidget.setItem(row,1, QTableWidgetItem(str(initial_row)))
-    
+    for i in range(rows):
+        cell = Ui_RunWindow.tableWidget.item(i,0)
+        if cell and cell.text():
+            occupied = occupied + 1
+
+    Ui_RunWindow.tableWidget.setItem(occupied,0, QTableWidgetItem(new_tool))
+    Ui_RunWindow.tableWidget.setItem(occupied,1, QTableWidgetItem(str(occupied)))
+    print(f"ADDED .... Tool: {new_tool}")
     #_translate = QtCore.QCoreApplication.translate
     
     '''if row == 0:
@@ -353,8 +357,8 @@ def getNewToolNameConfigurationRun(row):
 def popWindow(title, text):
         msgBox = QMessageBox()
         msgBox.setIcon(QMessageBox.Information)
-        msgBox.setText("Are you sure you want to remove this tool?")
-        msgBox.setWindowTitle("QMessageBox Example")
+        msgBox.setText(text)
+        msgBox.setWindowTitle(title)
         msgBox.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
 
         returnValue = msgBox.exec()
