@@ -4,7 +4,7 @@ from cassandra.query import SimpleStatement, BatchStatement
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QMessageBox, QTableWidgetItem
 import dbmanager
 import file_browser 
-import gui, scan, calendar, time, os
+import gui, scan, calendar, time, os, traceback
 from subprocess import Popen, PIPE
 
 scans = []
@@ -30,11 +30,9 @@ def saveConfigurationRun(Ui_RunWindow):
     # print(configuration_file)
 
     
-    dbmanager.insertQuery(
-        "INSERT INTO Configuration_Run (run_name, run_description, whitelisted_ip, blacklisted_ip, scan_type, configuration_file) VALUES (%s, %s, %s, %s)",
-        (run_name, run_description, whitelisted_ip, blacklisted_ip))
+    dbmanager.insertQuery("INSERT INTO Configuration_Run (run_name, run_description, whitelisted_ip, blacklisted_ip) VALUES (%s, %s, %s, %s)",(run_name, run_description, whitelisted_ip, blacklisted_ip))
     
-    updateRunListAddedTool(Ui_RunWindow, run_name, run_description, scan_type)
+    #updateRunListAddedTool(Ui_RunWindow, run_name, run_description)
     
     # clear text boxes
     Ui_RunWindow.textEdit_12.clear()
@@ -533,45 +531,41 @@ def runListAction(Ui_RunWindow, row, instruction):
         # Database Credentials
         session = cluster.connect()
         statement = None
-        import traceback
          
         try:
-            print(nameOfRun)
+            #print(nameOfRun)
             statement = SimpleStatement("SELECT tool_path FROM tutorialspoint.tool_specification WHERE tool_name = '{}';".format(nameOfRun), fetch_size=10)
             filepath = session.execute(statement)[0][0]
-            print(filepath)
+            #print(filepath)
             statement = SimpleStatement("SELECT option_argument FROM tutorialspoint.tool_specification WHERE tool_name = '{}';".format(nameOfRun), fetch_size=10)
             params = session.execute(statement)[0][0]
             scanTableStartTime(Ui_RunWindow, row)
         
-            print(filepath,params)
+            #print(filepath,params)
 
             thisScan.file = filepath
             thisScan.params = params
             thisScan.row = row
+            thisScan.ui = Ui_RunWindow
+            #thisScan.main = main
             thisScan.manage_state(0)
             
-            sc = filepath+' '+params
-            stdout = Popen(sc, shell=True, stdout=PIPE).stdout
-            output = stdout.read().decode()
-            if (output == ""):
-                print("Nothing was returned")
-                scanTableEndTime(Ui_RunWindow, False, "Scan failed", row)
-                traceback.print_exc()
-            else:        
-                scanTableEndTime(Ui_RunWindow, True, output, row)
-    
+            print(thisScan.output)
+            if row == 0:
+                Ui_RunWindow.textEdit_2.setText(Ui_RunWindow.output)
+            if row == 1:
+                Ui_RunWindow.textEdit_5(Ui_RunWindow.output)
+            if row == 2:
+                Ui_RunWindow.textEdit_122.setText(Ui_RunWindow.output)
+
         except:
             print("File Not found")
             scanTableEndTime(Ui_RunWindow, False, "Scan failed", row)
             traceback.print_exc()
         scans.append(thisScan)
-        
-
 
 def addToolToScanType(row,selection):
     dbmanager.updateList("configuration_run", "scan_type", "run_name", row, [selection])  
-
 
 if __name__ == "__main__":
     import sys

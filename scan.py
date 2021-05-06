@@ -1,6 +1,8 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import QObject, pyqtSignal, QThread
-import os
+from PyQt5.QtWidgets import QTableWidgetItem
+import os, time, calendar
+from subprocess import Popen, PIPE
 
 global playButton, pauseButton, stopButton
 
@@ -9,9 +11,48 @@ class worker(QThread):
     progress = pyqtSignal(int)
     filepath = ''
     params = ''
+    row = None
+    ui = None
+    output = None
+    #main = None
+
     def run(self):
-       os.system(self.filepath+' '+self.params)
+        sc = self.filepath+' '+self.params
+        stdout = Popen(sc, shell=True, stdout=PIPE).stdout
+        output = stdout.read().decode()
+        if output == "":
+            print("Nothing was returned")
+            self.scanTableEndTime(self.ui, False, "Scan failed", self.row)
+        else:
+            self.scanTableEndTime(self.ui, True, output, self.row)
+  
+    #def run_deprecated(self):
+        #os.system(self.filepath+' '+self.params)
     
+    def scanTableEndTime(self, ui, success, output, row):
+        
+        ts = calendar.timegm(time.gmtime())
+        ui.tableWidget.setItem(row, 3, QTableWidgetItem(str(ts)))
+        self.output = output
+        if success:
+            ui.tableWidget.setItem(row,4,QTableWidgetItem("Success"))
+            if row == 0:
+                ui.textEdit_2.setText(self.output)
+            if row == 1:
+                ui.textEdit_5.setText(self.output)
+            if row == 2:
+                ui.textEdit_122.setText(self.output)
+        else:
+            ui.tableWidget.setItem(row,4,QTableWidgetItem("Failure"))
+            '''
+            if row == 0:
+                ui.textEdit_2.setText(output)
+            if row == 1:
+                ui.textEdit_5.setText(output)
+            if row == 2:
+                ui.textEdit_122.setText(output)
+            '''
+        self.output = output
 
 class scan(QObject):
     def __init__(self):
@@ -21,6 +62,10 @@ class scan(QObject):
         self.state = -2
         self.file = ''
         self.params = ''
+        self.row = None
+        self.ui = None
+        self.output = None
+        #self.main = None
         self.thread = worker()
     
     
@@ -37,6 +82,9 @@ class scan(QObject):
             #self.finished.connect(self.stop())
             self.thread.filepath = self.file
             self.thread.params = self.params
+            self.thread.ui = self.ui
+            self.thread.row = self.row
+            #self.thread.main = self.main
             self.thread.start()
             print('scan: ...Starting')
 
@@ -79,3 +127,5 @@ class scan(QObject):
     #jacob's worker.run and run_file
     def run_file(self):
         os.system(self.file+' '+self.params)
+
+   
