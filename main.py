@@ -9,6 +9,7 @@ from subprocess import Popen, PIPE
 
 scans = []
 
+#TODO: when configuration_file textEdit filled should save that as separate row
 #Clicking Save in the Configuration Run Window
 def saveConfigurationRun(Ui_RunWindow):
     
@@ -16,19 +17,19 @@ def saveConfigurationRun(Ui_RunWindow):
     run_description = Ui_RunWindow.textEdit_13.toPlainText()
     whitelisted_ip = Ui_RunWindow.textEdit_14.toPlainText()
     blacklisted_ip = Ui_RunWindow.textEdit_15.toPlainText()
-    scan_type = Ui_RunWindow.comboBox.currentText()
-    configuration_file = Ui_RunWindow.textEdit_16.toPlainText()
+    #scan_type = Ui_RunWindow.comboBox.currentText()
+    #configuration_file = Ui_RunWindow.textEdit_16.toPlainText()
     
     print(run_name)
     print(run_description)
     print(whitelisted_ip)
     print(blacklisted_ip)
-    print(scan_type)
-    print(configuration_file)
+    #print(scan_type)
+    #print(configuration_file)
     
     dbmanager.insertQuery(
-        "INSERT INTO Configuration_Run (run_name, run_description, whitelisted_ip, blacklisted_ip, scan_type, configuration_file) VALUES (%s, %s, %s, %s, %s, %s)",
-        (run_name, run_description, whitelisted_ip, blacklisted_ip, scan_type, configuration_file))
+        "INSERT INTO Configuration_Run (run_name, run_description, whitelisted_ip, blacklisted_ip) VALUES (%s, %s, %s, %s)",
+        (run_name, run_description, whitelisted_ip, blacklisted_ip))
     
     updateRunListAddedTool(Ui_RunWindow, run_name, run_description, scan_type)
     
@@ -342,19 +343,29 @@ def getNewToolNameConfigurationRun(row):
     
         return tool.run_name
     
- 
 #Confirmation delete window
-def showDialog(Ui_RunWindow):
+def popWindow(title, text):
         msgBox = QMessageBox()
         msgBox.setIcon(QMessageBox.Information)
-        msgBox.setText("Are you sure you want to remove this tool?")
-        msgBox.setWindowTitle("QMessageBox Example")
+        msgBox.setText(text)
+        msgBox.setWindowTitle(title)
         msgBox.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
 
         returnValue = msgBox.exec()
         if returnValue == QMessageBox.Ok:
             print('OK clicked')  
- 
+
+def deleteDialogue():
+    title = "Delete Warning!"
+    warning = "Are you sure you want to remove this tool?"
+    popWindow(title, warning)
+
+def pauseDialogue(Ui_RunWindow, row):
+    title = "Mid-Scan Pause"
+    warning = "Scans can not be paused after they have been started."
+    warning = warning +"\n However the scans that come after will be paused from starting."
+    popWindow(title, warning)
+    runListAction(Ui_RunWindow, row,0)
     
 #Update the tool list when a tool is removed    
 def updateToolListRemovedTool(Ui_RunWindow): 
@@ -480,7 +491,9 @@ def runListAction(Ui_RunWindow, row, instruction):
             print(filepath)
             statement = SimpleStatement("SELECT option_argument FROM tutorialspoint.tool_specification WHERE tool_name = '{}';".format(nameOfRun), fetch_size=10)
             params = session.execute(statement)[0][0]
+
             scanTableStartTime(Ui_RunWindow, row)
+
         
             print(filepath,params)
 
@@ -505,6 +518,27 @@ def runListAction(Ui_RunWindow, row, instruction):
             traceback.print_exc()
         scans.append(thisScan)
         
+
+
+            statement = SimpleStatement("SELECT scan_type FROM tutorialspoint.configuration_run WHERE run_name = '{}';".format(nameOfRun), fetch_size=10)
+            filepath = session.execute(statement)[0][0]
+            #statement = SimpleStatement("SELECT option_argument FROM tutorialspoint.tool_specification WHERE tool_name = '{}';".format(nameOfRun), fetch_size=10)
+            #params = session.execute(statement)[0][0]
+    
+            thisScan.file = filepath
+            #thisScan.params = params
+
+            thisScan.row = row
+            thisScan.manage_state(0)
+        except:
+            print("File Not found")
+            traceback.print_exc()
+        scans.append(thisScan)
+
+def addToolToScanType(row,selection):
+    dbmanager.updateList("configuration_run", "scan_type", "run_name", row, [selection])
+
+    
 
 
 

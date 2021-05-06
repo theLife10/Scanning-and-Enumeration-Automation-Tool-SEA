@@ -2,4 +2,5 @@ CREATE TABLE Tool_Specification(tool_name text PRIMARY KEY, tool_description tex
 
 CREATE TABLE Tool_Dependency(tool_name text PRIMARY KEY, dependent_data text, relational_operator text, dependent_value text);
 
-CREATE TABLE Configuration_Run(run_name text PRIMARY KEY, run_description text, whitelisted_ip text, blacklisted_ip text, scan_type text, configuration_file text);
+
+CREATE TABLE Configuration_Run(run_name text PRIMARY KEY, run_description text, whitelisted_ip text, blacklisted_ip text, scan_type list<text>, configuration_file text);
