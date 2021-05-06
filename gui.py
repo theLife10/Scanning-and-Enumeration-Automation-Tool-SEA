@@ -536,6 +536,7 @@ class Ui_RunWindow(object):
         icon_scan.addPixmap(QtGui.QPixmap("play.png"), QtGui.QIcon.Normal, QtGui.QIcon.On)
         self.scan_area_play.setIcon(icon_scan)
         self.scan_area_play.setObjectName("scanButton_play")
+        self.scan_area_play.clicked.connect(lambda: main.play_scan(self,0,0))
 
         self.scan_area_play = QtWidgets.QToolButton(self.tableWidget)
         self.scan_area_play.setGeometry(QtCore.QRect(580, 58, 25, 19))
@@ -544,6 +545,7 @@ class Ui_RunWindow(object):
         icon_scan.addPixmap(QtGui.QPixmap("play.png"), QtGui.QIcon.Normal, QtGui.QIcon.On)
         self.scan_area_play.setIcon(icon_scan)
         self.scan_area_play.setObjectName("scanButton_play")
+        self.scan_area_play.clicked.connect(lambda: main.play_scan(self,1,0))
 
         self.scan_area_play = QtWidgets.QToolButton(self.tableWidget)
         self.scan_area_play.setGeometry(QtCore.QRect(580, 90, 25, 19))
@@ -552,6 +554,7 @@ class Ui_RunWindow(object):
         icon_scan.addPixmap(QtGui.QPixmap("play.png"), QtGui.QIcon.Normal, QtGui.QIcon.On)
         self.scan_area_play.setIcon(icon_scan)
         self.scan_area_play.setObjectName("scanButton_play")
+        self.scan_area_play.clicked.connect(lambda: main.play_scan(self,2,0))
 
         self.scan_area_pause = QtWidgets.QToolButton(self.tableWidget)
         self.scan_area_pause.setGeometry(QtCore.QRect(620, 30, 25, 19))
@@ -584,6 +587,7 @@ class Ui_RunWindow(object):
         icon_scan_stop.addPixmap(QtGui.QPixmap("stop.png"), QtGui.QIcon.Normal, QtGui.QIcon.On)
         self.scan_area_stop.setIcon(icon_scan_stop)
         self.scan_area_stop.setObjectName("scanButton_stop")
+        self.scan_area_stop.clicked.connect(lambda: main.runListAction(self,0, 1))
 
         self.scan_area_stop = QtWidgets.QToolButton(self.tableWidget)
         self.scan_area_stop.setGeometry(QtCore.QRect(660, 60, 25, 19))
@@ -592,6 +596,7 @@ class Ui_RunWindow(object):
         icon_scan_stop.addPixmap(QtGui.QPixmap("stop.png"), QtGui.QIcon.Normal, QtGui.QIcon.On)
         self.scan_area_stop.setIcon(icon_scan_stop)
         self.scan_area_stop.setObjectName("scanButton_stop")
+        self.scan_area_stop.clicked.connect(lambda: main.runListAction(self,1, 1))
 
         self.scan_area_stop = QtWidgets.QToolButton(self.tableWidget)
         self.scan_area_stop.setGeometry(QtCore.QRect(660, 90, 25, 19))
@@ -600,6 +605,7 @@ class Ui_RunWindow(object):
         icon_scan_stop.addPixmap(QtGui.QPixmap("stop.png"), QtGui.QIcon.Normal, QtGui.QIcon.On)
         self.scan_area_stop.setIcon(icon_scan_stop)
         self.scan_area_stop.setObjectName("scanButton_stop")
+        self.scan_area_stop.clicked.connect(lambda: main.runListAction(self,2, 1))
         
         
         
