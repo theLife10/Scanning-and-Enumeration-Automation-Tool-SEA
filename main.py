@@ -4,11 +4,8 @@ from cassandra.query import SimpleStatement, BatchStatement
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QMessageBox, QTableWidgetItem
 import dbmanager
 import file_browser 
-
 import gui, scan, calendar, time, os
 from subprocess import Popen, PIPE
-
-import gui, scan
 
 scans = []
 
@@ -134,24 +131,18 @@ def updateScanTable(Ui_RunWindow, new_tool):
     Ui_RunWindow.tableWidget.setItem(row,0, QTableWidgetItem(new_tool))
     Ui_RunWindow.tableWidget.setItem(row,1, QTableWidgetItem(str(initial_row)))
     
-    _translate = QtCore.QCoreApplication.translate
+    #_translate = QtCore.QCoreApplication.translate
     
-    if row == 0:
+    '''if row == 0:
         #Ui_RunWindow.tabWidget.addTab(Ui_RunWindow.scan_1, new_tool)
         Ui_RunWindow.tabWidget.setTabText(Ui_RunWindow.tabWidget.indexOf(Ui_RunWindow.scan_1), _translate("RunWindow", new_tool))
     else:
         Ui_RunWindow.tabWidget.setTabText(Ui_RunWindow.tabWidget.indexOf(Ui_RunWindow.scan_2), _translate("RunWindow", new_tool))
-        #Ui_RunWindow.tabWidget.addTab(Ui_RunWindow.scan_2, new_tool)
+        #Ui_RunWindow.tabWidget.addTab(Ui_RunWindow.scan_2, new_tool)'''
     
 
 #Update the scan list table start time when scan starts
-def scanTableEndTime(Ui_RunWindow, success, output):
-    
-    initial_row = nextAvailableRowConfigRun(Ui_RunWindow)
-    print(initial_row)
-    
-    row = initial_row - 1
-    print(row)
+def scanTableEndTime(Ui_RunWindow, success, output, row):
     
     ts = calendar.timegm(time.gmtime())
 
@@ -159,19 +150,24 @@ def scanTableEndTime(Ui_RunWindow, success, output):
     Ui_RunWindow.tableWidget.setItem(row,3, QTableWidgetItem(str(ts)))
     if success is True:
         Ui_RunWindow.tableWidget.setItem(row,4, QTableWidgetItem("Success"))
-        Ui_RunWindow.textEdit_2.setText(str(output))
+        if row == 0:
+             Ui_RunWindow.textEdit_2.setText(output)
+        if row == 1:
+             Ui_RunWindow.textEdit_5.setText(output)
+        if row == 2:
+             Ui_RunWindow.textEdit_122.setText(output)
     else:
         Ui_RunWindow.tableWidget.setItem(row,4, QTableWidgetItem("Failure"))
+        if row == 0:
+             Ui_RunWindow.textEdit_2.setText(output)
+        if row == 1:
+             Ui_RunWindow.textEdit_5.setText(output)
+        if row == 2:
+             Ui_RunWindow.textEdit_122.setText(output)
 
         
 #Update the scan list table start time when scan starts
-def scanTableStartTime(Ui_RunWindow):
-    
-    initial_row = nextAvailableRowConfigRun(Ui_RunWindow)
-    print(initial_row)
-    
-    row = initial_row - 1
-    print(row)
+def scanTableStartTime(Ui_RunWindow, row):
     
     ts = calendar.timegm(time.gmtime())
     
@@ -462,11 +458,7 @@ def addTooldependency(Ui_RunWindow):
     # clear text boxes
     Ui_RunWindow.textEdit_6.clear()
     Ui_RunWindow.textEdit_17.clear()
-
     refreshToolDependecy(Ui_RunWindow)    
-
-    refreshToolDependecy(Ui_RunWindow)
-
 
 def removeTooldependency(Ui_RunWindow):
     data = Ui_RunWindow.comboBox_7.currentText()
@@ -474,37 +466,37 @@ def removeTooldependency(Ui_RunWindow):
     refreshToolDependecy(Ui_RunWindow)
 
 def runListAction(Ui_RunWindow, row, instruction):
-    #name = Ui_RunWindow.RunListTable.item(row,0).text()
     exists = 0
     thisScan = scan.scan()
 
     for i in scans:
-        if( row == i.row):
+        if(row == i.row):
             i.manage_state(instruction)
             exists = 1
     if(exists == 0):
-        #thisScan.name = name
+        print("THE ROW IT'S LOOKING AT IS", row)
+        test = Ui_RunWindow.RunListTable.item(row, 0).text()
+        print(test)
         nameOfRun = Ui_RunWindow.RunListTable.item(row, 0).text()
         cluster = Cluster(['127.0.0.1'], port=9042)
         # Database Credentials
         session = cluster.connect()
         statement = None
         import traceback
+         
         try:
-
+            print(nameOfRun)
             statement = SimpleStatement("SELECT tool_path FROM tutorialspoint.tool_specification WHERE tool_name = '{}';".format(nameOfRun), fetch_size=10)
             filepath = session.execute(statement)[0][0]
             print(filepath)
             statement = SimpleStatement("SELECT option_argument FROM tutorialspoint.tool_specification WHERE tool_name = '{}';".format(nameOfRun), fetch_size=10)
             params = session.execute(statement)[0][0]
 
-            
-            scanTableStartTime(Ui_RunWindow)
-        
+            scanTableStartTime(Ui_RunWindow, row)
+
         
             print(filepath,params)
 
-            
             thisScan.file = filepath
             thisScan.params = params
             thisScan.row = row
@@ -512,17 +504,21 @@ def runListAction(Ui_RunWindow, row, instruction):
             
             sc = filepath+' '+params
             stdout = Popen(sc, shell=True, stdout=PIPE).stdout
-            output = stdout.read()
-            
-            scanTableEndTime(Ui_RunWindow, True, str(output))
+            output = stdout.read().decode()
+            if (output == ""):
+                print("Nothing was returned")
+                scanTableEndTime(Ui_RunWindow, False, "Scan failed", row)
+                traceback.print_exc()
+            else:        
+                scanTableEndTime(Ui_RunWindow, True, output, row)
     
         except:
             print("File Not found")
-            scanTableEndTime(Ui_RunWindow, False)
-            scanTableEndTime(Ui_RunWindow, True, "Scan failed")
+            scanTableEndTime(Ui_RunWindow, False, "Scan failed", row)
             traceback.print_exc()
         scans.append(thisScan)
         
+
 
             statement = SimpleStatement("SELECT scan_type FROM tutorialspoint.configuration_run WHERE run_name = '{}';".format(nameOfRun), fetch_size=10)
             filepath = session.execute(statement)[0][0]
@@ -543,6 +539,7 @@ def addToolToScanType(row,selection):
     dbmanager.updateList("configuration_run", "scan_type", "run_name", row, [selection])
 
     
+
 
 
 if __name__ == "__main__":
