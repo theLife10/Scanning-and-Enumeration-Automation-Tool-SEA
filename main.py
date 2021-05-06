@@ -508,22 +508,7 @@ def runListAction(Ui_RunWindow, row, instruction):
             print("File Not found")
             scanTableEndTime(Ui_RunWindow, False, "Scan failed", row)
             traceback.print_exc()
-        scans.append(thisScan)
-        
-
-            statement = SimpleStatement("SELECT scan_type FROM tutorialspoint.configuration_run WHERE run_name = '{}';".format(nameOfRun), fetch_size=10)
-            filepath = session.execute(statement)[0][0]
-            #statement = SimpleStatement("SELECT option_argument FROM tutorialspoint.tool_specification WHERE tool_name = '{}';".format(nameOfRun), fetch_size=10)
-            #params = session.execute(statement)[0][0]
-    
-            thisScan.file = filepath
-            #thisScan.params = params
-            thisScan.row = row
-            thisScan.manage_state(0)
-        except:
-            print("File Not found")
-            traceback.print_exc()
-        scans.append(thisScan)
+            scans.append(thisScan)
 
 
 
