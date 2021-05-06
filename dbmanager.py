@@ -47,4 +47,6 @@ def deleteQuery(statement, variable):
     closeConnection(session)
 
 def closeConnection(session):
+
     session.shutdown()
+
