@@ -508,15 +508,12 @@ class Ui_RunWindow(object):
         
         self.scan_1 = QtWidgets.QWidget()
         self.scan_1.setObjectName("scan_1")
-        #self.tabWidget.addTab(self.scan_1, "")
         
         self.scan_2 = QtWidgets.QWidget()
         self.scan_2.setObjectName("scan_2")
-        #self.tabWidget.addTab(self.scan_2, "")
         
         self.scan_3 = QtWidgets.QWidget()
         self.scan_3.setObjectName("scan_3")
-       # self.tabWidget.addTab(self.scan_3, "")
         
         self.textEdit_2 = QtWidgets.QTextEdit(self.scan_1)
         self.textEdit_2.setGeometry(QtCore.QRect(3, 0, 481, 79))
