@@ -508,18 +508,30 @@ class Ui_RunWindow(object):
         self.tabWidget = QtWidgets.QTabWidget(self.groupBox_4)
         self.tabWidget.setGeometry(QtCore.QRect(180, 160, 491, 101))
         self.tabWidget.setObjectName("tabWidget")
+        
         self.scan_1 = QtWidgets.QWidget()
         self.scan_1.setObjectName("scan_1")
         self.tabWidget.addTab(self.scan_1, "")
+        
         self.scan_2 = QtWidgets.QWidget()
         self.scan_2.setObjectName("scan_2")
         self.tabWidget.addTab(self.scan_2, "")
+        
+        self.scan_3 = QtWidgets.QWidget()
+        self.scan_3.setObjectName("scan_3")
+        self.tabWidget.addTab(self.scan_3, "")
+        
         self.textEdit_2 = QtWidgets.QTextEdit(self.scan_1)
         self.textEdit_2.setGeometry(QtCore.QRect(3, 0, 481, 79))
         self.textEdit_2.setObjectName("textEdit_2")
+        
         self.textEdit_5 = QtWidgets.QTextEdit(self.scan_2)
         self.textEdit_5.setGeometry(QtCore.QRect(0, 0, 491, 79))
         self.textEdit_5.setObjectName("textEdit_5")
+        
+        self.textEdit_122 = QtWidgets.QTextEdit(self.scan_3)
+        self.textEdit_122.setGeometry(QtCore.QRect(0, 0, 501, 79))
+        self.textEdit_122.setObjectName("textEdit_122")
         
         self.scan_area_play = QtWidgets.QToolButton(self.tableWidget)
         self.scan_area_play.setGeometry(QtCore.QRect(580, 30, 25, 19))
@@ -784,6 +796,8 @@ class Ui_RunWindow(object):
         execution_number = "1"
         if row_value == "":
             execution_number = ""
+        else:
+            self.tabWidget.addTab(self.scan_1, row_value)
         self.tableWidget.setItem(0,0, QTableWidgetItem(row_value))
         self.tableWidget.setItem(0,1, QTableWidgetItem(execution_number))
         
@@ -791,6 +805,8 @@ class Ui_RunWindow(object):
         row_value = main.getNewToolNameConfigurationRun(1)
         if row_value == "":
             execution_number = ""
+        else:
+            self.tabWidget.addTab(self.scan_2, row_value)
         self.tableWidget.setItem(1,0, QTableWidgetItem(row_value))
         self.tableWidget.setItem(1,1, QTableWidgetItem(execution_number))
         
@@ -798,6 +814,8 @@ class Ui_RunWindow(object):
         row_value = main.getNewToolNameConfigurationRun(2)
         if row_value == "":
             execution_number = ""
+        else:
+            self.tabWidget.addTab(self.scan_3, row_value)
         self.tableWidget.setItem(2,0, QTableWidgetItem(row_value))
         self.tableWidget.setItem(2,1, QTableWidgetItem(execution_number))
         
