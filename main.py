@@ -16,15 +16,19 @@ def saveConfigurationRun(Ui_RunWindow):
     run_description = Ui_RunWindow.textEdit_13.toPlainText()
     whitelisted_ip = Ui_RunWindow.textEdit_14.toPlainText()
     blacklisted_ip = Ui_RunWindow.textEdit_15.toPlainText()
-    scan_type = Ui_RunWindow.comboBox.currentText()
-    configuration_file = Ui_RunWindow.textEdit_16.toPlainText()
+
+    # scan_type = Ui_RunWindow.comboBox.currentText()
+    # configuration_file = Ui_RunWindow.textEdit_16.toPlainText()
+
     
     print(run_name)
     print(run_description)
     print(whitelisted_ip)
     print(blacklisted_ip)
-    print(scan_type)
-    print(configuration_file)
+
+    # print(scan_type)
+    # print(configuration_file)
+
     
     dbmanager.insertQuery(
         "INSERT INTO Configuration_Run (run_name, run_description, whitelisted_ip, blacklisted_ip, scan_type, configuration_file) VALUES (%s, %s, %s, %s, %s, %s)",
@@ -343,10 +347,10 @@ def getNewToolNameConfigurationRun(row):
         tool = data[row]
     
         return tool.run_name
-    
- 
-#Confirmation delete window
-def showDialog(Ui_RunWindow):
+
+     
+#Pop up window base
+def popWindow(title, text):
         msgBox = QMessageBox()
         msgBox.setIcon(QMessageBox.Information)
         msgBox.setText("Are you sure you want to remove this tool?")
@@ -357,6 +361,20 @@ def showDialog(Ui_RunWindow):
         if returnValue == QMessageBox.Ok:
             print('OK clicked')  
  
+
+#confirmation delete window
+def deleteDialogue():
+    title = "Delete Warning!"
+    warning = "Are you sure you want to remove this tool?"
+    popWindow(title, warning)
+
+#midscan pause window
+def pauseDialogue(Ui_RunWindow, row):
+    title = "Mid-Scan Pause"
+    warning = "This scan can not be paused after it has been started."
+    popWindow(title, warning)
+    runListAction(Ui_RunWindow, row,0)
+
     
 #Update the tool list when a tool is removed    
 def updateToolListRemovedTool(Ui_RunWindow): 
@@ -550,6 +568,9 @@ def runListAction(Ui_RunWindow, row, instruction):
         scans.append(thisScan)
         
 
+
+def addToolToScanType(row,selection):
+    dbmanager.updateList("configuration_run", "scan_type", "run_name", row, [selection])  
 
 
 if __name__ == "__main__":
