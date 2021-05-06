@@ -144,7 +144,7 @@ class Ui_RunWindow(object):
         icon1.addPixmap(QtGui.QPixmap("pause.png"), QtGui.QIcon.Normal, QtGui.QIcon.On)
         self.toolButton_4.setIcon(icon1)
         self.toolButton_4.setObjectName("toolButton_4")
-       self.toolButton_4.clicked.connect(lambda: main.pauseDialogue(self,0))
+        self.toolButton_4.clicked.connect(lambda: main.pauseDialogue(self,0))
 
         self.toolButton_5 = QtWidgets.QToolButton(self.groupBox_3)
         self.toolButton_5.setGeometry(QtCore.QRect(340, 80, 25, 19))
