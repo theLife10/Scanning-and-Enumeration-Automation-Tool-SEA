@@ -31,10 +31,6 @@ class Ui_RunWindow(object):
         self.comboBox_2 = QtWidgets.QComboBox(self.groupBox_2)
         self.comboBox_2.setGeometry(QtCore.QRect(540, 70, 81, 22))
         self.comboBox_2.setObjectName("comboBox_2")
-        self.comboBox_2.addItem("")
-        self.comboBox_2.addItem("")
-        self.comboBox_2.addItem("")
-        self.comboBox_2.setItemText(2, "")
         self.label_13 = QtWidgets.QLabel(self.groupBox_2)
         self.label_13.setGeometry(QtCore.QRect(320, 50, 161, 16))
         font = QtGui.QFont()
@@ -73,6 +69,7 @@ class Ui_RunWindow(object):
         self.pushButton_7 = QtWidgets.QPushButton(self.groupBox_2)
         self.pushButton_7.setGeometry(QtCore.QRect(340, 240, 91, 23))
         self.pushButton_7.setObjectName("pushButton_7")
+        self.pushButton_7.clicked.connect(lambda: main.generateXML(self))
         self.label_29 = QtWidgets.QLabel(self.groupBox_2)
         self.label_29.setGeometry(QtCore.QRect(430, 10, 111, 16))
         self.label_29.setObjectName("label_29")
@@ -508,18 +505,30 @@ class Ui_RunWindow(object):
         self.tabWidget = QtWidgets.QTabWidget(self.groupBox_4)
         self.tabWidget.setGeometry(QtCore.QRect(180, 160, 491, 101))
         self.tabWidget.setObjectName("tabWidget")
+        
         self.scan_1 = QtWidgets.QWidget()
         self.scan_1.setObjectName("scan_1")
-        self.tabWidget.addTab(self.scan_1, "")
+        #self.tabWidget.addTab(self.scan_1, "")
+        
         self.scan_2 = QtWidgets.QWidget()
         self.scan_2.setObjectName("scan_2")
-        self.tabWidget.addTab(self.scan_2, "")
+        #self.tabWidget.addTab(self.scan_2, "")
+        
+        self.scan_3 = QtWidgets.QWidget()
+        self.scan_3.setObjectName("scan_3")
+       # self.tabWidget.addTab(self.scan_3, "")
+        
         self.textEdit_2 = QtWidgets.QTextEdit(self.scan_1)
         self.textEdit_2.setGeometry(QtCore.QRect(3, 0, 481, 79))
         self.textEdit_2.setObjectName("textEdit_2")
+        
         self.textEdit_5 = QtWidgets.QTextEdit(self.scan_2)
         self.textEdit_5.setGeometry(QtCore.QRect(0, 0, 491, 79))
         self.textEdit_5.setObjectName("textEdit_5")
+        
+        self.textEdit_122 = QtWidgets.QTextEdit(self.scan_3)
+        self.textEdit_122.setGeometry(QtCore.QRect(0, 0, 501, 79))
+        self.textEdit_122.setObjectName("textEdit_122")
         
         self.scan_area_play = QtWidgets.QToolButton(self.tableWidget)
         self.scan_area_play.setGeometry(QtCore.QRect(580, 30, 25, 19))
@@ -606,8 +615,15 @@ class Ui_RunWindow(object):
         _translate = QtCore.QCoreApplication.translate
         RunWindow.setWindowTitle(_translate("RunWindow", "Form"))
         self.label_10.setText(_translate("RunWindow", "Report Name"))
-        self.comboBox_2.setItemText(0, _translate("RunWindow", "Test"))
-        self.comboBox_2.setItemText(1, _translate("RunWindow", "Test1"))
+        tool = main.getNewToolNameConfigurationRun(0)
+        if tool != "":
+            self.comboBox_2.addItem(tool)
+        tool = main.getNewToolNameConfigurationRun(1)
+        if tool != "":
+            self.comboBox_2.addItem(tool)
+        tool = main.getNewToolNameConfigurationRun(2)
+        if tool != "":
+            self.comboBox_2.addItem(tool)
         self.label_13.setText(_translate("RunWindow", "Report Description"))
         self.label_11.setText(_translate("RunWindow", "Run"))
         self.label_14.setText(_translate("RunWindow", "Run"))
@@ -781,9 +797,12 @@ class Ui_RunWindow(object):
         self.tableWidget.setSortingEnabled(__sortingEnabled)
         
         row_value = main.getNewToolNameConfigurationRun(0)
+        print(row_value)
         execution_number = "1"
         if row_value == "":
             execution_number = ""
+        else:
+            self.tabWidget.addTab(self.scan_1, row_value)
         self.tableWidget.setItem(0,0, QTableWidgetItem(row_value))
         self.tableWidget.setItem(0,1, QTableWidgetItem(execution_number))
         
@@ -791,6 +810,8 @@ class Ui_RunWindow(object):
         row_value = main.getNewToolNameConfigurationRun(1)
         if row_value == "":
             execution_number = ""
+        else:
+            self.tabWidget.addTab(self.scan_2, row_value)
         self.tableWidget.setItem(1,0, QTableWidgetItem(row_value))
         self.tableWidget.setItem(1,1, QTableWidgetItem(execution_number))
         
@@ -798,6 +819,8 @@ class Ui_RunWindow(object):
         row_value = main.getNewToolNameConfigurationRun(2)
         if row_value == "":
             execution_number = ""
+        else:
+            self.tabWidget.addTab(self.scan_3, row_value)
         self.tableWidget.setItem(2,0, QTableWidgetItem(row_value))
         self.tableWidget.setItem(2,1, QTableWidgetItem(execution_number))
         
