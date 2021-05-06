@@ -353,8 +353,8 @@ def getNewToolNameConfigurationRun(row):
 def popWindow(title, text):
         msgBox = QMessageBox()
         msgBox.setIcon(QMessageBox.Information)
-        msgBox.setText("Are you sure you want to remove this tool?")
-        msgBox.setWindowTitle("QMessageBox Example")
+        msgBox.setText(text)
+        msgBox.setWindowTitle(title)
         msgBox.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
 
         returnValue = msgBox.exec()
