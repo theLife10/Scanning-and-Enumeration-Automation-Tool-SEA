@@ -141,13 +141,13 @@ def updateScanTable(Ui_RunWindow, new_tool):
     
 
 #Update the scan list table start time when scan starts
-def scanTableEndTime(Ui_RunWindow, success, output):
+def scanTableEndTime(Ui_RunWindow, success, output, row):
     
-    initial_row = nextAvailableRowConfigRun(Ui_RunWindow)
+    '''initial_row = nextAvailableRowConfigRun(Ui_RunWindow)
     print(initial_row)
     
     row = initial_row - 1
-    print(row)
+    print(row)'''
     
     ts = calendar.timegm(time.gmtime())
 
@@ -161,13 +161,13 @@ def scanTableEndTime(Ui_RunWindow, success, output):
 
         
 #Update the scan list table start time when scan starts
-def scanTableStartTime(Ui_RunWindow):
+def scanTableStartTime(Ui_RunWindow, row):
     
-    initial_row = nextAvailableRowConfigRun(Ui_RunWindow)
+    '''initial_row = nextAvailableRowConfigRun(Ui_RunWindow)
     print(initial_row)
     
     row = initial_row - 1
-    print(row)
+    print(row)'''
     
     ts = calendar.timegm(time.gmtime())
     
@@ -456,16 +456,18 @@ def removeTooldependency(Ui_RunWindow):
     refreshToolDependecy(Ui_RunWindow)
 
 def runListAction(Ui_RunWindow, row, instruction):
-    #name = Ui_RunWindow.RunListTable.item(row,0).text()
+    print("INITIALLY:", row)
     exists = 0
     thisScan = scan.scan()
 
     for i in scans:
-        if( row == i.row):
+        if(row == i.row):
             i.manage_state(instruction)
             exists = 1
     if(exists == 0):
-        #thisScan.name = name
+        print("THE ROW IT'S LOOKING AT IS", row)
+        test = Ui_RunWindow.RunListTable.item(row, 0).text()
+        print(test)
         nameOfRun = Ui_RunWindow.RunListTable.item(row, 0).text()
         cluster = Cluster(['127.0.0.1'], port=9042)
         # Database Credentials
@@ -473,18 +475,17 @@ def runListAction(Ui_RunWindow, row, instruction):
         statement = None
         import traceback
         try:
+            print(nameOfRun)
             statement = SimpleStatement("SELECT tool_path FROM tutorialspoint.tool_specification WHERE tool_name = '{}';".format(nameOfRun), fetch_size=10)
             filepath = session.execute(statement)[0][0]
             print(filepath)
             statement = SimpleStatement("SELECT option_argument FROM tutorialspoint.tool_specification WHERE tool_name = '{}';".format(nameOfRun), fetch_size=10)
             params = session.execute(statement)[0][0]
-            
-            scanTableStartTime(Ui_RunWindow)
+            scanTableStartTime(Ui_RunWindow, row)
         
         
             print(filepath,params)
 
-            
             thisScan.file = filepath
             thisScan.params = params
             thisScan.row = row
@@ -493,13 +494,11 @@ def runListAction(Ui_RunWindow, row, instruction):
             sc = filepath+' '+params
             stdout = Popen(sc, shell=True, stdout=PIPE).stdout
             output = stdout.read()
-            
-            scanTableEndTime(Ui_RunWindow, True, str(output))
+            scanTableEndTime(Ui_RunWindow, True, str(output), row)
     
         except:
             print("File Not found")
-            scanTableEndTime(Ui_RunWindow, False)
-            scanTableEndTime(Ui_RunWindow, True, "Scan failed")
+            scanTableEndTime(Ui_RunWindow, False, "Scan failed", row)
             traceback.print_exc()
         scans.append(thisScan)
         
