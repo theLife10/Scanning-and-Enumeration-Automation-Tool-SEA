@@ -34,12 +34,6 @@ def insertQuery(statement, variables):
     # Close connection
     closeConnection(session)
 
-def updateList(table, column, row, name, insert):
-    session = connect()
-    statement =  f"UPDATE {table} SET {column} = {column} + {insert} where {row} = '{name}';"
-    session.execute("USE tutorialspoint;")
-    session.execute(statement)
-    closeConnection(session)
 
 def deleteQuery(statement, variable):
     session = connect()
@@ -53,4 +47,6 @@ def deleteQuery(statement, variable):
     closeConnection(session)
 
 def closeConnection(session):
+
     session.shutdown()
+

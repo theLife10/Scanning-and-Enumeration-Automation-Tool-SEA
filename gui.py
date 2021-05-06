@@ -32,10 +32,6 @@ class Ui_RunWindow(object):
         self.comboBox_2 = QtWidgets.QComboBox(self.groupBox_2)
         self.comboBox_2.setGeometry(QtCore.QRect(540, 70, 81, 22))
         self.comboBox_2.setObjectName("comboBox_2")
-        self.comboBox_2.addItem("")
-        self.comboBox_2.addItem("")
-        self.comboBox_2.addItem("")
-        self.comboBox_2.setItemText(2, "")
         self.label_13 = QtWidgets.QLabel(self.groupBox_2)
         self.label_13.setGeometry(QtCore.QRect(320, 50, 161, 16))
         font = QtGui.QFont()
@@ -74,6 +70,7 @@ class Ui_RunWindow(object):
         self.pushButton_7 = QtWidgets.QPushButton(self.groupBox_2)
         self.pushButton_7.setGeometry(QtCore.QRect(340, 240, 91, 23))
         self.pushButton_7.setObjectName("pushButton_7")
+        self.pushButton_7.clicked.connect(lambda: main.generateXML(self))
         self.label_29 = QtWidgets.QLabel(self.groupBox_2)
         self.label_29.setGeometry(QtCore.QRect(430, 10, 111, 16))
         self.label_29.setObjectName("label_29")
@@ -147,7 +144,7 @@ class Ui_RunWindow(object):
         icon1.addPixmap(QtGui.QPixmap("pause.png"), QtGui.QIcon.Normal, QtGui.QIcon.On)
         self.toolButton_4.setIcon(icon1)
         self.toolButton_4.setObjectName("toolButton_4")
-        self.toolButton_4.clicked.connect(lambda: main.pauseDialogue(self,0))
+        self.toolButton_4.clicked.connect(lambda: main.runListAction(self,0, 0))
 
         self.toolButton_5 = QtWidgets.QToolButton(self.groupBox_3)
         self.toolButton_5.setGeometry(QtCore.QRect(340, 80, 25, 19))
@@ -174,7 +171,7 @@ class Ui_RunWindow(object):
         self.toolButton_7.setGeometry(QtCore.QRect(300, 110, 25, 19))
         self.toolButton_7.setIcon(icon1)
         self.toolButton_7.setObjectName("toolButton_7")
-        self.toolButton_7.clicked.connect(lambda: main.pauseDialogue(self,1))
+        self.toolButton_7.clicked.connect(lambda: main.runListAction(self,1, 0))
 
         self.toolButton_8 = QtWidgets.QToolButton(self.groupBox_3)
         self.toolButton_8.setGeometry(QtCore.QRect(340, 140, 25, 19))
@@ -192,7 +189,7 @@ class Ui_RunWindow(object):
         self.toolButton_9.setGeometry(QtCore.QRect(300, 140, 25, 19))
         self.toolButton_9.setIcon(icon1)
         self.toolButton_9.setObjectName("toolButton_9")
-        self.toolButton_9.clicked.connect(lambda: main.pauseDialogue(self,2))
+        self.toolButton_9.clicked.connect(lambda: main.runListAction(self,2, 0))
 
         self.toolButton_10 = QtWidgets.QToolButton(self.groupBox_3)
         self.toolButton_10.setGeometry(QtCore.QRect(300, 170, 25, 19))
@@ -247,7 +244,6 @@ class Ui_RunWindow(object):
         self.pushButton = QtWidgets.QPushButton(self.groupBox_5)
         self.pushButton.setGeometry(QtCore.QRect(380, 160, 51, 23))
         self.pushButton.setObjectName("pushButton")
-        self.pushButton.clicked.connect(lambda: main.addToolToScanType(self.textEdit_12.toPlainText(),self.comboBox.currentText()))
         self.label_8 = QtWidgets.QLabel(self.groupBox_5)
         self.label_8.setGeometry(QtCore.QRect(200, 190, 21, 21))
         self.label_8.setObjectName("label_8")
@@ -513,15 +509,12 @@ class Ui_RunWindow(object):
         
         self.scan_1 = QtWidgets.QWidget()
         self.scan_1.setObjectName("scan_1")
-        self.tabWidget.addTab(self.scan_1, "")
         
         self.scan_2 = QtWidgets.QWidget()
         self.scan_2.setObjectName("scan_2")
-        self.tabWidget.addTab(self.scan_2, "")
         
         self.scan_3 = QtWidgets.QWidget()
         self.scan_3.setObjectName("scan_3")
-        self.tabWidget.addTab(self.scan_3, "")
         
         self.textEdit_2 = QtWidgets.QTextEdit(self.scan_1)
         self.textEdit_2.setGeometry(QtCore.QRect(3, 0, 481, 79))
@@ -620,8 +613,15 @@ class Ui_RunWindow(object):
         _translate = QtCore.QCoreApplication.translate
         RunWindow.setWindowTitle(_translate("RunWindow", "Form"))
         self.label_10.setText(_translate("RunWindow", "Report Name"))
-        self.comboBox_2.setItemText(0, _translate("RunWindow", "Test"))
-        self.comboBox_2.setItemText(1, _translate("RunWindow", "Test1"))
+        tool = main.getNewToolNameConfigurationRun(0)
+        if tool != "":
+            self.comboBox_2.addItem(tool)
+        tool = main.getNewToolNameConfigurationRun(1)
+        if tool != "":
+            self.comboBox_2.addItem(tool)
+        tool = main.getNewToolNameConfigurationRun(2)
+        if tool != "":
+            self.comboBox_2.addItem(tool)
         self.label_13.setText(_translate("RunWindow", "Report Description"))
         self.label_11.setText(_translate("RunWindow", "Run"))
         self.label_14.setText(_translate("RunWindow", "Run"))
@@ -731,19 +731,19 @@ class Ui_RunWindow(object):
         self.label_30.setText(_translate("RunWindow", "Tool List"))
         self.pushButton_9.setText(_translate("RunWindow", "Remove"))
         self.pushButton_9.clicked.connect(lambda: main.removeToolList(self, 0))
-        self.pushButton_9.clicked.connect(lambda: main.deleteDialogue(self))
+        self.pushButton_9.clicked.connect(lambda: main.showDialog(self))
         self.pushButton_10.setText(_translate("RunWindow", "Remove"))
         self.pushButton_10.clicked.connect(lambda: main.removeToolList(self, 1))
-        self.pushButton_10.clicked.connect(lambda: main.deleteDialogue(self))
+        self.pushButton_10.clicked.connect(lambda: main.showDialog(self))
         self.pushButton_11.setText(_translate("RunWindow", "Remove"))
         self.pushButton_11.clicked.connect(lambda: main.removeToolList(self, 2))
-        self.pushButton_11.clicked.connect(lambda: main.deleteDialogue(self))
+        self.pushButton_11.clicked.connect(lambda: main.showDialog(self))
         self.pushButton_12.setText(_translate("RunWindow", "Remove"))
         self.pushButton_12.clicked.connect(lambda: main.removeToolList(self, 3))
-        self.pushButton_12.clicked.connect(lambda: main.deleteDialogue(self))
+        self.pushButton_12.clicked.connect(lambda: main.showDialog(self))
         self.pushButton_13.setText(_translate("RunWindow", "Remove"))
         self.pushButton_13.clicked.connect(lambda: main.removeToolList(self, 4))
-        self.pushButton_13.clicked.connect(lambda: main.deleteDialogue(self))
+        self.pushButton_13.clicked.connect(lambda: main.showDialog(self))
         self.pushButton_20.setText(_translate("RunWindow", "Cancel"))
         self.pushButton_21.setText(_translate("RunWindow", "Save"))
         self.label_21.setText(_translate("RunWindow", "Tool Specification"))
@@ -795,6 +795,7 @@ class Ui_RunWindow(object):
         self.tableWidget.setSortingEnabled(__sortingEnabled)
         
         row_value = main.getNewToolNameConfigurationRun(0)
+        print(row_value)
         execution_number = "1"
         if row_value == "":
             execution_number = ""

@@ -16,19 +16,23 @@ def saveConfigurationRun(Ui_RunWindow):
     run_description = Ui_RunWindow.textEdit_13.toPlainText()
     whitelisted_ip = Ui_RunWindow.textEdit_14.toPlainText()
     blacklisted_ip = Ui_RunWindow.textEdit_15.toPlainText()
+
     # scan_type = Ui_RunWindow.comboBox.currentText()
     # configuration_file = Ui_RunWindow.textEdit_16.toPlainText()
+
     
     print(run_name)
     print(run_description)
     print(whitelisted_ip)
     print(blacklisted_ip)
+
     # print(scan_type)
     # print(configuration_file)
+
     
     dbmanager.insertQuery(
-        "INSERT INTO Configuration_Run (run_name, run_description, whitelisted_ip, blacklisted_ip) VALUES (%s, %s, %s, %s)",
-        (run_name, run_description, whitelisted_ip, blacklisted_ip))
+        "INSERT INTO Configuration_Run (run_name, run_description, whitelisted_ip, blacklisted_ip, scan_type, configuration_file) VALUES (%s, %s, %s, %s, %s, %s)",
+        (run_name, run_description, whitelisted_ip, blacklisted_ip, scan_type, configuration_file))
     
     updateRunListAddedTool(Ui_RunWindow, run_name, run_description, scan_type)
     
@@ -73,6 +77,8 @@ def updateRunListAddedTool(Ui_RunWindow, new_tool, description, tool):
     row = row - 1
     
     item = Ui_RunWindow.RunListTable.item(row, 0)
+    
+    Ui_RunWindow.comboBox_2.addItem(new_tool)
 
     print("Tool added: ", new_tool)
     
@@ -341,18 +347,20 @@ def getNewToolNameConfigurationRun(row):
         tool = data[row]
     
         return tool.run_name
+
      
 #Pop up window base
 def popWindow(title, text):
         msgBox = QMessageBox()
         msgBox.setIcon(QMessageBox.Information)
-        msgBox.setText(text)
-        msgBox.setWindowTitle(title)
+        msgBox.setText("Are you sure you want to remove this tool?")
+        msgBox.setWindowTitle("QMessageBox Example")
         msgBox.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
 
         returnValue = msgBox.exec()
         if returnValue == QMessageBox.Ok:
             print('OK clicked')  
+ 
 
 #confirmation delete window
 def deleteDialogue():
@@ -366,6 +374,7 @@ def pauseDialogue(Ui_RunWindow, row):
     warning = "This scan can not be paused after it has been started."
     popWindow(title, warning)
     runListAction(Ui_RunWindow, row,0)
+
     
 #Update the tool list when a tool is removed    
 def updateToolListRemovedTool(Ui_RunWindow): 
@@ -393,7 +402,51 @@ def updateToolListRemovedTool(Ui_RunWindow):
             item.setText(_translate("RunWindow", "")) 
         else:
             item.setText(_translate("RunWindow", row_value)) 
-            
+ 
+#Generate XML   
+def generateXML(Ui_RunWindow):
+    
+    name = Ui_RunWindow.textEdit_3.toPlainText()
+    description = Ui_RunWindow.textEdit.toPlainText()
+    run = Ui_RunWindow.comboBox_2.currentText()
+    
+    output = generateXMLReport(Ui_RunWindow, run)
+    
+    import xml.etree.ElementTree as ET
+  
+    data = ET.Element('Report')
+      
+    s_elem1 = ET.SubElement(data, 'Report name')
+    s_elem2 = ET.SubElement(data, 'Report description')
+    s_elem3 = ET.SubElement(data, 'Run name')
+    s_elem4 = ET.SubElement(data, 'Run output')
+      
+    s_elem1.text = name
+    s_elem2.text = description
+    s_elem3.text = run
+    s_elem4.text = output
+      
+    b_xml = ET.tostring(data)
+      
+    with open("Report.xml", "wb") as f:
+        f.write(b_xml)
+    print("XML Report exported")
+    
+def generateXMLReport(Ui_RunWindow, run):
+    
+    tab1 = Ui_RunWindow.tableWidget.item(0,0).text()
+    tab2 = Ui_RunWindow.tableWidget.item(1,0).text()
+    tab3 = Ui_RunWindow.tableWidget.item(2,0).text()
+    
+    if (tab1 == run):
+        return Ui_RunWindow.textEdit_2.toPlainText()
+    if (tab2 == run):
+        return Ui_RunWindow.textEdit_5.toPlainText()
+    if (tab3 == run):
+        return Ui_RunWindow.textEdit_122.toPlainText()
+    else:
+        return "No result found"
+        
     
 
 def refreshToolDependecy(Ui_RunWindow):
@@ -475,8 +528,6 @@ def runListAction(Ui_RunWindow, row, instruction):
             exists = 1
     if(exists == 0):
         print("THE ROW IT'S LOOKING AT IS", row)
-        test = Ui_RunWindow.RunListTable.item(row, 0).text()
-        print(test)
         nameOfRun = Ui_RunWindow.RunListTable.item(row, 0).text()
         cluster = Cluster(['127.0.0.1'], port=9042)
         # Database Credentials
@@ -517,8 +568,10 @@ def runListAction(Ui_RunWindow, row, instruction):
         scans.append(thisScan)
         
 
+
 def addToolToScanType(row,selection):
     dbmanager.updateList("configuration_run", "scan_type", "run_name", row, [selection])  
+
 
 if __name__ == "__main__":
     import sys
