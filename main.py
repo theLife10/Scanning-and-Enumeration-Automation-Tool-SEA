@@ -568,9 +568,61 @@ def runListAction(Ui_RunWindow, row, instruction):
         scans.append(thisScan)
         
 
+def play_scan(Ui_RunWindow,row,instruction):
+    exists = 0
+    thisScan = scan.scan()
+
+    for i in scans:
+        if(row == i.row):
+            i.manage_state(instruction)
+            exists = 1
+    if(exists == 0):
+        print("THE ROW IT'S LOOKING AT IS", row)
+        test = Ui_RunWindow.RunListTable.item(row, 0).text()
+        print(test)
+        nameOfRun = Ui_RunWindow.RunListTable.item(row, 0).text()
+        cluster = Cluster(['127.0.0.1'], port=9042)
+        # Database Credentials
+        session = cluster.connect()
+        statement = None
+        import traceback
+         
+        try:
+            print(nameOfRun)
+            statement = SimpleStatement("SELECT tool_path FROM tutorialspoint.tool_specification WHERE tool_name = '{}';".format(nameOfRun), fetch_size=10)
+            filepath = session.execute(statement)[0][0]
+            print(filepath)
+            statement = SimpleStatement("SELECT option_argument FROM tutorialspoint.tool_specification WHERE tool_name = '{}';".format(nameOfRun), fetch_size=10)
+            params = session.execute(statement)[0][0]
+            scanTableStartTime(Ui_RunWindow, row)
+        
+            print(filepath,params)
+
+          
+            thisScan.file = filepath
+            thisScan.params = params
+            thisScan.row = row
+            thisScan.manage_state(0)
+            
+            sc = filepath+' '+params
+            stdout = Popen(sc, shell=True, stdout=PIPE).stdout
+            output = stdout.read().decode()
+            if (output == ""):
+                print("Nothing was returned")
+                scanTableEndTime(Ui_RunWindow, False, "Scan failed", row)
+                traceback.print_exc()
+            else:        
+                scanTableEndTime(Ui_RunWindow, True, output, row)
+    
+        except:
+            print("File Not found")
+            scanTableEndTime(Ui_RunWindow, False, "Scan failed", row)
+            traceback.print_exc()
+        scans.append(thisScan)
 
 def addToolToScanType(row,selection):
     dbmanager.updateList("configuration_run", "scan_type", "run_name", row, [selection])  
+
 
 
 if __name__ == "__main__":
