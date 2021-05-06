@@ -1,3 +1,4 @@
+#
 # -*- coding: utf-8 -*-
 
 # Form implementation generated from reading ui file 'gui.ui'
@@ -197,9 +198,6 @@ class Ui_RunWindow(object):
         self.toolButton_10.setGeometry(QtCore.QRect(300, 170, 25, 19))
         self.toolButton_10.setIcon(icon1)
         self.toolButton_10.setObjectName("toolButton_10")
-
-        self.toolButton_10.clicked.connect(lambda: main.pauseDialogue(self,3))
-
         #self.toolButton_10.clicked.connect(lambda: main.runListAction(self,3, 0))
 
         self.toolButton_11 = QtWidgets.QToolButton(self.groupBox_3)
@@ -239,7 +237,6 @@ class Ui_RunWindow(object):
         self.comboBox = QtWidgets.QComboBox(self.groupBox_5)
         self.comboBox.setGeometry(QtCore.QRect(220, 160, 151, 21))
         self.comboBox.setObjectName("comboBox")
-
         tool = main.getNewToolNameToolSpecification(0)
         self.comboBox.addItem(tool)
         tool = main.getNewToolNameToolSpecification(1)
@@ -247,7 +244,6 @@ class Ui_RunWindow(object):
         tool = main.getNewToolNameToolSpecification(2)
         self.comboBox.addItem(tool)
         #self.comboBox.setItemText(2, "")
-
         self.pushButton = QtWidgets.QPushButton(self.groupBox_5)
         self.pushButton.setGeometry(QtCore.QRect(380, 160, 51, 23))
         self.pushButton.setObjectName("pushButton")
